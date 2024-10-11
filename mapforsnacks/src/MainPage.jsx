@@ -24,10 +24,10 @@ const MainPage = () => {
       </header>
 
       {!isAuthenticated ? (
-        <button onClick={login}>Login</button>
+        <button onClick={login} className="hero-button">Login</button>
         ) : (
         <div>
-          <button onClick={logout}>Logout</button>
+          <button onClick={logout} className="hero-button">Logout</button>
           <Link to="/profile"><button className="hero-button">Go to Profile</button></Link>
         </div>
       )}
