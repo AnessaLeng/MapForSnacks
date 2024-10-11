@@ -46,6 +46,9 @@
     align-items: center;
   }
   
+  .hero-images {
+    padding-bottom: 5px;
+  }
   
   .hero-content {
     display: flex;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from './Authentication';
 import { Navigate } from 'react-router-dom';
 import './Profile.css';
+import './App.css';
 
 function Profile() {
     const { isAuthenticated } = useAuth();
@@ -10,7 +11,7 @@ function Profile() {
     useEffect(() => {
         const fetchSearchHistory = async () => {
             try {
-                const response = await fetch('http://localhost:5000/search-history'); //tbd - connect to database
+                const response = await fetch('http://localhost:5000/api/search-history'); //tbd - connect to database
                 const data = await response.json();
                 setSearchHistory(data);
             }
@@ -31,7 +32,9 @@ function Profile() {
 
     return (
         <div className="profile-page">
-            <h1>Profile</h1>
+            <section className="hero">
+                <h1>Profile</h1>
+            </section>
             <div>
                 <h3>Search History</h3>
                 <table>

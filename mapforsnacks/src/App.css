@@ -49,12 +49,36 @@ a {
   text-decoration: none;
 }
 
+.search-bar {
+  margin-top: 18px;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+  border-color: #71ab8b;
+  outline: none;
+}
+
 .dropdown-trigger img {
   position: absolute;
   block-size: 80px;
-  top: 20px;
+  top: 30px;
   right: 20px;
-  height: 60px;
+  height: 70px;
   overflow: hidden;
   cursor: pointer
 }
@@ -115,7 +139,9 @@ h3 span {
 }
 
 .dropdownItem img {
-  max-width: 30px;
+  max-width: 40px;
+  max-height: 25px;
+  margin-top: 6px;
   margin-right: 5px;
   opacity: 0.5;
   transition: var(--speed);
@@ -123,8 +149,9 @@ h3 span {
 
 .dropdownItem a {
   font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
   max-width: 100px;
-  margin-top: 8px;
+  margin-top: 10px;
   margin-left: 10px;
   transition: var(--speed);
 }
