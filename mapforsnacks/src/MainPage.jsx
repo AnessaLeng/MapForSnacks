@@ -2,7 +2,7 @@ import './MainPage.css';
 import React from 'react';
 import { useAuth } from './Authentication';
 import { Link } from 'react-router-dom'; // For navigation to the map page
-//import './MainPage.css'; //CSS for main page
+import './MainPage.css'; //CSS for main page
 import './App.css';
 
 const MainPage = () => {
