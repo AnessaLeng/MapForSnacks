@@ -30,7 +30,7 @@ function Profile() {
     }
 
     return (
-        <div>
+        <div className="profile-page">
             <h1>Profile</h1>
             <div>
                 <h3>Search History</h3>

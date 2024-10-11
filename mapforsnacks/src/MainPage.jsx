@@ -43,12 +43,12 @@ const MainPage = () => {
             </button>
             ) : (
             <div className="hero-content">
-              <button onClick={logout} className="hero-button">
-                Logout
-              </button>
               <Link to="/profile">
                 <button className="hero-button">Go to Profile</button>
               </Link>
+              <button onClick={logout} className="hero-button">
+                Logout
+              </button>
             </div>
           )}
         </div>

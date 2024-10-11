@@ -1,3 +1,7 @@
+:root {
+  --speed: 500ms;
+}
+
 .App {
   text-align: center;
 }
@@ -49,4 +53,92 @@ a {
   position: absolute;
   block-size: 80px;
   top: 20px;
+  right: 20px;
+  height: 60px;
+  overflow: hidden;
+  cursor: pointer
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  background-color: #fff;
+  border-radius: 25px;
+  padding: 10px 20px;
+  width: 200px;
+}
+
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 20px;
+  height: 20px;
+  width: 20px;
+  transform: rotate(45deg);
+}
+
+h3 {
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  padding: 20px 0;
+  font-weight: 500;
+  line-height: 1.2rem;
+}
+
+h3 span {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dropdown-menu ul li {
+  padding: 6px 10px;
+  padding-bottom: 5px;
+  border-top: 1px solid rgba(0, 0, 0, 0.082);
+}
+
+.dropdown-menu ul li:hover a {
+  color: rgb(212, 33, 9);
+  cursor: pointer;
+}
+
+.dropdown-menu ul li:hover img {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.dropdownItem {
+  display: flex;
+  margin: 10px auto;
+}
+
+.dropdownItem img {
+  max-width: 30px;
+  margin-right: 5px;
+  opacity: 0.5;
+  transition: var(--speed);
+}
+
+.dropdownItem a {
+  font-family: 'Montserrat', sans-serif;
+  max-width: 100px;
+  margin-top: 8px;
+  margin-left: 10px;
+  transition: var(--speed);
+}
+
+.dropdown-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: var(--speed) ease;
+}
+
+.dropdown-menu.inactive {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: var(--speed) ease;
 }
