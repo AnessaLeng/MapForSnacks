@@ -1,0 +1,23 @@
+{% extends '_layout.html' %}
+
+{% block body %}
+<h1>Vending Machine Locator</h1>
+<form action="/submit_form" method="post">
+    <div>
+        <label for="location" class="form-label">Current Location</label><br>
+        <input type="text" class="form-text" id="location" name="location">
+    </div><br>
+    <div>
+        <fieldset>
+            <legend>Choose Type</legend>
+            <label for="vending_type_snacks" class="form-label">
+                <input type="radio" id="vending_type_snacks" name="vending_type_snacks" value="snacks">Snacks
+            </label><br>
+            <label for="vending_type_drinks" class="form-label">
+                <input type="radio" id="vending_type_drinks" name="vending_type_drinks" value="drinks">Drinks
+            </label>
+        </fieldset>        
+    </div><br>
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
