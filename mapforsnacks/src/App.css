@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.dropdown-trigger img {
+  position: absolute;
+  block-size: 80px;
+  top: 20px;
+}
