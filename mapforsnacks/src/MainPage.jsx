@@ -23,15 +23,6 @@ const MainPage = () => {
       <img src="/images/soda.png" alt="Right Snack" className="snack-image" />
       </header>
 
-      {!isAuthenticated ? (
-        <button onClick={login} className="hero-button">Login</button>
-        ) : (
-        <div>
-          <button onClick={logout} className="hero-button">Logout</button>
-          <Link to="/profile"><button className="hero-button">Go to Profile</button></Link>
-        </div>
-      )}
-
       {/* Hero Section */}
       <section className="hero">
         <img 
@@ -46,6 +37,20 @@ const MainPage = () => {
           <Link to="/map">
             <button className="hero-button">Find Vending Machines</button>
           </Link>
+          {!isAuthenticated ? (
+            <button onClick={login} className="hero-button">
+              Login
+            </button>
+            ) : (
+            <div className="hero-content">
+              <button onClick={logout} className="hero-button">
+                Logout
+              </button>
+              <Link to="/profile">
+                <button className="hero-button">Go to Profile</button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
