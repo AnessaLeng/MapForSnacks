@@ -1,3 +1,4 @@
+import './MainPage.css';
 import React from 'react';
 import { Link } from 'react-router-dom'; // For navigation to the map page
 //import './MainPage.css'; //CSS for main page
@@ -10,10 +11,12 @@ const MainPage = () => {
   };
 
   return (
-    <div className="main-page">
-      {/* Website Title */}
-      <header>
-        <h1>Maps For Snacks</h1>
+  <div className="main-page">
+      {/* Website Title with Snack Images */}
+      <header className="title-section">
+      <img src="/images/chips.png" alt="Left Snack" className="snack-image" />
+      <h1>Maps For Snacks</h1>
+      <img src="/images/soda.png" alt="Right Snack" className="snack-image" />
       </header>
 
       {/* Hero Section */}
