@@ -26,11 +26,6 @@ const MainPage = () => {
 
       {/* Hero Section */}
       <section className="hero">
-        <div className="hero-images">
-          <img src="/images/vending-machine2.png" alt="vending-machine" className="hero-image"/>
-          <img src="/images/vending-machine.png" alt="vending-machine" className="hero-image"/>
-          <img src="/images/vending-machine3.png" alt="vending-machine" className="hero-image"/>
-        </div>
         <div className="hero-content">
           <button onClick={scrollToAbout} className="hero-button">
             About Us
@@ -59,6 +54,12 @@ const MainPage = () => {
           )}
         </div>
       </section>
+
+      <br/><div className="hero-images">
+          <img src="/images/vending-machine2.png" alt="vending-machine" className="hero-image"/>
+          <img src="/images/vending-machine.png" alt="vending-machine" className="hero-image"/>
+          <img src="/images/vending-machine3.png" alt="vending-machine" className="hero-image"/>
+      </div>      
 
       {/* uncomment if we should have a search bar on the mainpage */}
       {/*

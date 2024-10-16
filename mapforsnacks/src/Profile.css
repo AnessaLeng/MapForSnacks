@@ -11,11 +11,26 @@
     padding-bottom: 8px;
 }
 
+.profile-page .user-info h3 {
+    text-align: left;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
 h3 {
     width: 100%;
     text-align: center;
     font-size: 22px;
     padding: 10px 0;
+    font-weight: 500;
+}
+
+.search-history {
+    margin-top: 40px;
+    border-top: 1px solid #3b604a;
+}
+
+.search-history h3 {
     font-weight: 500;
 }
 

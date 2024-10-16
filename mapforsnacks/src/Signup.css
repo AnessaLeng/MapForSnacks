@@ -16,9 +16,19 @@
     margin-top: 30px;
 }
 
+.signup-form .form-input {
+    width: 40%;
+}
+
+.signup-form .form-file {
+    width: 40%;
+}
+
 .signup-form .form-label {
     font-size: 18px;
     text-align: left;
+    font-weight: 400;
+    margin-left: 125px;
 }
 
 .signup-form button {

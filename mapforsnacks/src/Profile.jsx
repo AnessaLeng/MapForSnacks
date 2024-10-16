@@ -35,27 +35,34 @@ function Profile() {
             <section className="hero">
                 <h1>Profile</h1>
             </section>
-            <div>
-                <h3>Search History</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Searched</th>
-                            <th>Location</th>
-                            <th>Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {searchHistory.map((entry, index) => (
-                            <tr key={index}>
-                                <td>{entry.searched_input}</td>
-                                <td>{entry.location}</td>
-                                <td>{entry.timestamp.toLocaleString()}</td>
+            <section className="user-info">
+                <h3>Name: </h3>
+                <h3>Username: </h3>
+                <h3>Password: </h3>
+            </section>
+            <section className="search-history">
+                <div>
+                    <h3>Search History</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Searched</th>
+                                <th>Location</th>
+                                <th>Timestamp</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {searchHistory.map((entry, index) => (
+                                <tr key={index}>
+                                    <td>{entry.searched_input}</td>
+                                    <td>{entry.location}</td>
+                                    <td>{entry.timestamp.toLocaleString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     );
 }
