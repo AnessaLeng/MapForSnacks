@@ -1,3 +1,4 @@
+/* Profile Page */
 .profile-page {
     height: 100%;
     font-family: 'Montserrat', sans-serif;
@@ -6,34 +7,72 @@
     background-color: #f0f0f0;
 }
 
-.profile-page .hero {
-    padding-top: 8px;
-    padding-bottom: 8px;
+/* Header with Gradient Background */
+.profile-header {
+    background: linear-gradient(90deg, #25DB9A, #256BDB);
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+}
+
+/* Profile Information Card */
+.profile-page .user-info {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: left;
 }
 
 .profile-page .user-info h3 {
-    text-align: left;
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
-
-h3 {
-    width: 100%;
-    text-align: center;
+    color: #2c3e50;
     font-size: 22px;
-    padding: 10px 0;
+    padding: 8px 0;
     font-weight: 500;
 }
 
+.profile-page .user-info label {
+    font-weight: bold;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.profile-page .user-info p {
+    font-size: 1.1em;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+}
+
+/* Search History Section */
 .search-history {
     margin-top: 40px;
-    border-top: 1px solid #3b604a;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .search-history h3 {
-    font-weight: 500;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #256BDB;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
+/* Table Styling */
+/* Table Styling with Gradient Header */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -41,11 +80,48 @@ table {
 }
 
 th, td {
-    padding: 10px;
+    padding: 12px;
     border: 1px solid #ddd;
     text-align: left;
 }
 
 th {
-    background-color: #f2f2f2;
+    background: linear-gradient(90deg, #25A5DB, #72DBDA); /* Gradient for table header */
+    color: white;
+    font-weight: bold;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+td {
+    background-color: #f8f8f8;
+}
+
+table tr:hover td {
+    background-color: #e0f7fa; /* Row hover effect */
+}
+
+
+
+
+/* Divider */
+.divider {
+    height: 2px;
+    background-color: #25A5DB;
+    margin: 30px 0;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-header {
+        font-size: 1.5rem;
+    }
+
+    .profile-page .user-info, .search-history {
+        width: 90%;
+        margin: 20px auto;
+    }
 }
