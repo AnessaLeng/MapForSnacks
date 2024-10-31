@@ -6,12 +6,14 @@ import MainPage from './MainPage';
 import MapPage from './MapPage';
 import Profile from './Profile';
 import Signup from './Signup';
+
 import trigger from '../src/images/dropdown_icon.png';
 import profile from '../src/images/account.png';
 import map from '../src/images/google-maps.png';
 import home from '../src/images/home.png';
 import signup from '../src/images/add-account.png';
 import './App.css';
+import MockData from './mockdata';
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -48,6 +50,7 @@ function App() {
                   <DropdownItem img= {map} alt = {"Map"} link = {"/map"} text = {"Map"}/>
                   <DropdownItem img= {signup} alt = {"Signup"} link = {"/signup"} text = {"Signup"}/>
                   <DropdownItem img= {profile} alt = {"Profile"} link = {"/profile"} text = {"Profile"}/>
+                  <DropdownItem img= {map} alt = {"Profile"} link = {"/mockdata"} text = {"Vending-Data"}/>
                   {/* isAuthenticated && <DropdownItem img= {profile} alt = {"Profile"} link = {"/profile"} text = {"Profile"}/> */}
                 </ul>
               </div>
@@ -58,6 +61,8 @@ function App() {
           <Route path="/map" element={<MapPage />} /> {/* Map page */}
           <Route path="/profile" element={<Profile />} /> {/* Profile page */}
           <Route path="/signup" element={<Signup />} /> {/* Signup page */}
+          <Route path="/mockdata" element={<MockData />} /> {/* New Vending Machines page */}
+   
         </Routes>
       </Router>
     </AuthProvider>
@@ -69,6 +74,7 @@ function DropdownItem(item) {
     <li className="dropdownItem">
       <img src={item.img} alt={item.text}></img>
       <Link to={item.link}>{item.text}</Link>
+      
     </li>
   );
 }
