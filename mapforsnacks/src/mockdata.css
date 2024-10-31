@@ -1,0 +1,63 @@
+/* MockData.css */
+
+/* General styles */
+.mock-data-list {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid peachpuff;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Headings */
+  .mock-data-list h2 {
+    text-align: center;
+    color: lightskyblue;
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  thead {
+    background-color: #007bff;
+    color: black;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left; /* Make sure to provide a value here */
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    font-weight: bold;
+  }
+  
+  tr:hover {
+    background-color: lightsalmon;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 600px) {
+    th, td {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .mock-data-list {
+      padding: 10px;
+    }
+  
+    .mock-data-list h2 {
+      font-size: 20px;
+    }
+  }
+  
