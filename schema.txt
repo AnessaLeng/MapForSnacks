@@ -1,0 +1,46 @@
+CREATE DATABASE mapforsnacks;
+USE mapforsnacks;
+
+-- Users Table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Vending Machine Table
+CREATE TABLE vending_machine (
+    machine_id INT AUTO_INCREMENT PRIMARY KEY,
+    location_name VARCHAR(100) NOT NULL,
+    latitude DECIMAL(9, 6) NOT NULL,
+    longitude DECIMAL(9, 6) NOT NULL,
+    user_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+-- Search History Table
+CREATE TABLE search_history (
+    search_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    search_term VARCHAR(255) NOT NULL,
+    search_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Google API Location Table
+CREATE TABLE google_api_location (
+    location_id INT AUTO_INCREMENT PRIMARY KEY,
+    machine_id INT NOT NULL,
+    api_place_id VARCHAR(100) NOT NULL UNIQUE,
+    api_address VARCHAR(255) NOT NULL,
+    api_latitude DECIMAL(9, 6) NOT NULL,
+    api_longitude DECIMAL(9, 6) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (machine_id) REFERENCES vending_machine(machine_id) ON DELETE CASCADE
+);

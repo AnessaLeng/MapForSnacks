@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-//import { useAuth } from './Authentication';
-//import { Navigate } from 'react-router-dom';
-import './Signup.css';
-import './App.css';
+import '../styles/Signup.css';
+import '../styles/App.css';
 
 function Signup() {
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
-        username: "",
+        email: "",
         password: "",
         profile_image: null
     });
@@ -43,7 +41,7 @@ function Signup() {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/signup', {
+                const response = await fetch('http://localhost:3000/signup', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -81,8 +79,8 @@ function Signup() {
                     {errors.last_name && <div className="error-message">{errors.last_name}</div>}
                 </div><br/>
                 <div>
-                    <input type="text" className="form-input" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required/>
-                    {errors.username && <div className="error-message">{errors.username}</div>}
+                    <input type="text" className="form-input" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required/>
+                    {errors.email && <div className="error-message">{errors.email}</div>}
                 </div><br/>
                 <div>
                     <input type="password" className="form-input" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required/>

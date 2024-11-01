@@ -1,29 +1,39 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-//import { useAuth } from './Authentication';
-import { AuthProvider } from './Authentication';
-import MainPage from './MainPage';
-import MapPage from './MapPage';
-import Profile from './Profile';
-import Signup from './Signup';
+import { gapi } from 'gapi-script';
+import { AuthProvider, useAuth } from './content/Authentication';
+import MainPage from './pages/MainPage';
+import MapPage from './pages/MapPage';
+import Profile from './pages/Profile';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
 import trigger from '../src/images/dropdown_icon.png';
 import profile from '../src/images/account.png';
 import map from '../src/images/google-maps.png';
 import home from '../src/images/home.png';
 import signup from '../src/images/add-account.png';
-import './App.css';
+import './styles/App.css';
+
+const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID; //'988046540404-rvnhbcvmi6ksqda0vgnj5gv0g8goebs2.apps.googleusercontent.com'
 
 function App() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef();
-  //const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login, logout } = useAuth();
 
   useEffect(() => {
-    let handler = (event) =>{
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: ""
+      });
+    }
+    gapi.load('client:auth2', start);
+
+    const handler = (event) =>{
       if (!menuRef.current.contains(event.target)) {
         setOpen(false);
       }
-      
     };
 
     document.addEventListener("mousedown", handler);
@@ -46,18 +56,30 @@ function App() {
                 <ul>
                   <DropdownItem img= {home} alt = {"Home"} link = {"/"} text = {"Home"}/>
                   <DropdownItem img= {map} alt = {"Map"} link = {"/map"} text = {"Map"}/>
-                  <DropdownItem img= {signup} alt = {"Signup"} link = {"/signup"} text = {"Signup"}/>
-                  <DropdownItem img= {profile} alt = {"Profile"} link = {"/profile"} text = {"Profile"}/>
-                  {/* isAuthenticated && <DropdownItem img= {profile} alt = {"Profile"} link = {"/profile"} text = {"Profile"}/> */}
+                  {!isAuthenticated ? ( 
+                  <li className="dropdownItem">
+                    <DropdownItem img= {signup} alt = {"Signup"} link = {"/signup"} text = {"Signup"}/>
+                    <Link to='/login'>
+                      <button>Login</button>
+                    </Link>
+                  </li>
+                ) : (
+                  <li className="dropdownItem">
+                    <DropdownItem img= {profile} alt = {"Profile"} link = {"/profile"} text = {"Profile"}/>
+                    <button onClick={logout}>Logout</button>
+                  </li>
+                )}
                 </ul>
               </div>
             </div>
         </div>
+
         <Routes>
           <Route path="/" element={<MainPage />} /> {/* MainPage on the root path */}
           <Route path="/map" element={<MapPage />} /> {/* Map page */}
           <Route path="/profile" element={<Profile />} /> {/* Profile page */}
           <Route path="/signup" element={<Signup />} /> {/* Signup page */}
+          <Route path="/login" element={<Login />} /> {/* Login page */}
         </Routes>
       </Router>
     </AuthProvider>

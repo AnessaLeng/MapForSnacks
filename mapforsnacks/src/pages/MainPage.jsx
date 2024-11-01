@@ -1,13 +1,20 @@
-import './MainPage.css';
-import React from 'react';
-import { useAuth } from './Authentication';
-import { Link } from 'react-router-dom'; // For navigation to the map page
-//import SearchBar from './Searchbar'; // This is only if we want a search bar on the main page
-import './MainPage.css'; //CSS for main page
-import './App.css';
+import React, { useEffect } from 'react';
+import { useAuth } from '../content/Authentication';
+import { Link, useNavigate } from 'react-router-dom'; // For navigation to the map page
+import LoginButton from '../components/login';
+import LogOutButton from '../components/logout';
+import '../styles/MainPage.css';
+import '../styles/App.css';
 
 const MainPage = () => {
-  const { isAuthenticated, login, logout } = useAuth(); 
+  const { isAuthenticated, login, setUser, setError } = useAuth(); 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile'); // Redirect to the profile page
+    }
+  }, [isAuthenticated, navigate]);
 
   // Function to scroll to the About section
   const scrollToAbout = () => {
@@ -38,18 +45,17 @@ const MainPage = () => {
               <Link to="/signup">
               <button className="hero-button">Signup</button>
               </Link>
-              <button onClick={login} className="hero-button">
-                Login
-              </button>
+              <Link to="/login">
+              <button onClick={login} className="hero-button">Login</button>
+              </Link>
+              <LoginButton setUser={setUser} setError={setError} />
             </div>
             ) : (
             <div className="hero-content">
               <Link to="/profile">
                 <button className="hero-button">Go to Profile</button>
               </Link>
-              <button onClick={logout} className="hero-button">
-                Logout
-              </button>
+              <LogOutButton />
             </div>
           )}
         </div>
@@ -60,13 +66,6 @@ const MainPage = () => {
           <img src="/images/vending-machine.png" alt="vending-machine" className="hero-image"/>
           <img src="/images/vending-machine3.png" alt="vending-machine" className="hero-image"/>
       </div>      
-
-      {/* uncomment if we should have a search bar on the mainpage */}
-      {/*
-      <div className="search-bar">
-          <SearchBar />
-      </div>
-      */}
 
       {/* About Section */}
       <section id="about" className="about-section">

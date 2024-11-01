@@ -13,6 +13,9 @@
 
 .profile-page .user-info h3 {
     text-align: left;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: -10px;
     padding-top: 2px;
     padding-bottom: 2px;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import SearchBar from './Searchbar';
-import './MapPage.css';
-import './App.css';
+import SearchBar from '../content/Searchbar';
+import '../styles/MapPage.css';
+import '../styles/App.css';
 
 const MapPage = () => {
   return (

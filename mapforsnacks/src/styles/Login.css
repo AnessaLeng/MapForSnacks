@@ -1,0 +1,41 @@
+.login-page {
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
+.login-page .hero {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.login-form {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.login-form .form-input {
+    width: 40%;
+}
+
+.login-form .form-label {
+    font-size: 18px;
+    text-align: left;
+    font-weight: 400;
+    margin-left: 125px;
+}
+
+.login-form button {
+    width: 40%;
+    height: 40px;
+    background-color: #71ab8b;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    transition: background-color 0.3s ease;
+}
