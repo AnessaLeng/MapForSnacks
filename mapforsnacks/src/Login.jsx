@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-//import { GoogleLogin } from 'react-google-login';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useAuth } from './Authentication';
 import { useNavigate } from 'react-router-dom';
@@ -96,10 +95,12 @@ const Login = () => {
                     <button type="submit">Submit</button><br/><br/>
                 </form>
                 <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-                    <GoogleLogin
-                        onSuccess={handleGoogleSuccess}
-                        onFailure={handleGoogleFailure}
-                    />
+                    <div className="google-login">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onFailure={handleGoogleFailure}
+                        />
+                    </div>
                 </GoogleOAuthProvider>
             </div>
         </div>

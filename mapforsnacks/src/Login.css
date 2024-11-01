@@ -51,3 +51,12 @@
     background-color: #72DBDA;
     transform: scale(1.05);
 }
+
+div .google-login {
+    width: 40%;
+    height: 50px;
+    padding: 12px 20px;
+    margin-left: 28%;
+    border: none;
+    border-radius: 8px;
+}
