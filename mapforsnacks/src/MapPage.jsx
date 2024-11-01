@@ -15,6 +15,7 @@ const MapPage = () => {
                 script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB2cgUyYlI3DBdzF_GA9WLi6uMoh75ONsY&libraries=places`;
                 script.async = true;
                 script.onload = () => initMap();
+                script.onerror = () => console.error("Failed to load Google Maps script");
                 document.head.appendChild(script);
             } else {
                 initMap();
@@ -24,38 +25,44 @@ const MapPage = () => {
     }, []);
 
     const initMap = () => {
-        const mapOptions = {
-            center: { lat: 35.3075, lng: -80.7294 }, // Center map on UNCC campus
-            zoom: 15,
-        };
-        const mapInstance = new window.google.maps.Map(document.getElementById('map'), mapOptions);
-        setMap(mapInstance);
-        addMarkers(mapInstance, filteredMachines);
+        if (!map && window.google && window.google.maps) {
+            const mapOptions = {
+                center: { lat: 35.3075, lng: -80.7294 }, // Center map on UNCC campus
+                zoom: 15,
+            };
+            const mapInstance = new window.google.maps.Map(document.getElementById('map'), mapOptions);
+            setMap(mapInstance);
+            addMarkers(mapInstance, filteredMachines);
+        } else if (!window.google) {
+            console.error("Google Maps not loaded");
+        }
     };
 
     const addMarkers = (mapInstance, machines) => {
-        const infoWindowInstance = new window.google.maps.InfoWindow();
-        machines.forEach((machine) => {
-            const marker = new window.google.maps.Marker({
-                position: { lat: machine.lat, lng: machine.lng },
-                map: mapInstance,
-                title: machine.location,
-            });
+        if (mapInstance) {
+            const infoWindowInstance = new window.google.maps.InfoWindow();
+            machines.forEach((machine) => {
+                const marker = new window.google.maps.Marker({
+                    position: { lat: machine.lat, lng: machine.lng },
+                    map: mapInstance,
+                    title: machine.location,
+                });
 
-            marker.addListener('click', () => {
-                infoWindowInstance.setContent(`
-                    <div>
-                        <h2>${machine.location}</h2>
-                        <p>Items: ${machine.items.join(', ')}</p>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=${machine.lat},${machine.lng}" 
-                           target="_blank" 
-                           rel="noopener noreferrer">Show in Google Maps</a>
-                    </div>
-                `);
-                infoWindowInstance.open(mapInstance, marker);
+                marker.addListener('click', () => {
+                    infoWindowInstance.setContent(`
+                        <div>
+                            <h2>${machine.location}</h2>
+                            <p>Items: ${machine.items.join(', ')}</p>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${machine.lat},${machine.lng}" 
+                               target="_blank" 
+                               rel="noopener noreferrer">Show in Google Maps</a>
+                        </div>
+                    `);
+                    infoWindowInstance.open(mapInstance, marker);
+                });
             });
-        });
-        setInfoWindow(infoWindowInstance);
+            setInfoWindow(infoWindowInstance);
+        }
     };
 
     const handleFilterChange = (query) => {
@@ -65,7 +72,15 @@ const MapPage = () => {
             machine.items.some((item) => item.toLowerCase().includes(lowerCaseQuery))
         );
         setFilteredMachines(filtered);
+        clearMarkers(); // Clear existing markers before adding new ones
         addMarkers(map, filtered); // Update markers based on filtered results
+    };
+
+    const clearMarkers = () => {
+        if (map && map.markers) {
+            map.markers.forEach(marker => marker.setMap(null));
+            map.markers = [];
+        }
     };
 
     return (
@@ -82,10 +97,3 @@ const MapPage = () => {
 };
 
 export default MapPage;
-
-
-
-
-
-
-
