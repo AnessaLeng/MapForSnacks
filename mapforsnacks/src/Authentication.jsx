@@ -5,16 +5,19 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
 
     const login = (userData, token) => {
         setIsAuthenticated(true);
         setUser(userData);
+        setToken(token);
         localStorage.setItem('accessToken', token);
     };
 
     const logout = () => {
         setIsAuthenticated(false);
         setUser(null);
+        setToken(null);
         localStorage.removeItem('accessToken');
     };
 
@@ -23,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout, setError }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout, setError }}>
             {children}
         </AuthContext.Provider>
     );

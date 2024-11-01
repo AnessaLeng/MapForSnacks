@@ -15,10 +15,10 @@ function Signup() {
     const [errors, setErrors] = useState({});
 
     const handleChange = (event) => {
-        const { name, value, type, files } = event.target;
+        const { name, value } = event.target;
         setFormData({
             ...formData,
-            [name]: type === 'file' ? files[0] : value
+            [name]: value
         });
     };
 

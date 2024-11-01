@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { gapi } from 'gapi-script';
+//import { gapi } from 'gapi-script';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './Authentication';
 import MainPage from './MainPage';
 import MapPage from './MapPage';
@@ -23,14 +24,6 @@ function App() {
   const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
-    function start() {
-      gapi.client.init({
-        clientId: clientId,
-        scope: ""
-      });
-    }
-    gapi.load('client:auth2', start);
-
     const handler = (event) =>{
       if (!menuRef.current.contains(event.target)) {
         setOpen(false);
@@ -46,6 +39,7 @@ function App() {
   }, []);
 
   return (
+    <GoogleOAuthProvider clientId={clientId}>
     <AuthProvider>
       <Router>
         <div className="App">
@@ -82,6 +76,7 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 
@@ -95,9 +90,11 @@ function DropdownItem(item) {
 }
 
 const AppWithProvider = () => (
+  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
   <AuthProvider>
     <App />
   </AuthProvider>
+  </GoogleOAuthProvider>
 );
 
 export default AppWithProvider;

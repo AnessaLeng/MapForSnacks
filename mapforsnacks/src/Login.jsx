@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { GoogleLogin } from 'react-google-login';
+import { jwtDecode } from 'jwt-decode';
+//import { GoogleLogin } from 'react-google-login';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { useAuth } from './Authentication';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import './App.css';
 
-const Login = ({ onGoogleSuccess, onGoogleFailure }) => {
+const Login = () => {
+    const { login, setError } = useAuth();
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -47,27 +51,31 @@ const Login = ({ onGoogleSuccess, onGoogleFailure }) => {
                 if (response.ok) {
                     console.log("User logged in successfully!");
                     navigate('/profile');
-                }
-                else {
+                } else {
                     const errorData = await response.json();
                     console.error("Error logging in user: ", errorData);
                 }
-            }
-            catch (error) {
+            } catch (error) {
                 console.error("Error: ", error);
             }
         }
     };
 
-    const handleGoogleSuccess = (response) => {
-        const token = response.tokenId;
-        onGoogleSuccess(token);
+    const handleGoogleSuccess = async (credentialResponse) => {
+        const token = credentialResponse.credential;
+        console.log("Google Login Success! ID Token: ", token);
+        const userPayload = jwtDecode(token);
+        const userData = {
+            firstName: userPayload.given_name || "N/A",
+            lastName: userPayload.family_name || "N/A",
+            email: userPayload.email || "N/A"
+        };
+        login(userData, token);
         navigate('/profile');
     };
 
-    const handleGoogleFailure = (response) => {
-        console.error("Google login failed: ", response);
-        onGoogleFailure(response);
+    const handleGoogleFailure = (error) => {
+        console.error("Google login failed: ", error);
     };
 
     return (
@@ -76,7 +84,7 @@ const Login = ({ onGoogleSuccess, onGoogleFailure }) => {
                 <h1>Login</h1>
             </section>
             <div className="login-form">
-                <form onSubmit={handleSubmit} method="POST">
+                <form onSubmit={handleSubmit}>
                     <div>
                         <input type="text" className="form-input" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required autoComplete="email"/>
                         {errors.email && <div className="error-message">{errors.email}</div>}
@@ -86,16 +94,13 @@ const Login = ({ onGoogleSuccess, onGoogleFailure }) => {
                         {errors.password && <div className="error-message">{errors.password}</div>}
                     </div><br/>
                     <button type="submit">Submit</button><br/><br/>
-                    <div>
+                </form>
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
                     <GoogleLogin
-                        clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                        buttonText="Login with Google"
                         onSuccess={handleGoogleSuccess}
                         onFailure={handleGoogleFailure}
-                        cookiePolicy={'single_host_origin'}
                     />
-                </div> 
-                </form> 
+                </GoogleOAuthProvider>
             </div>
         </div>
     );

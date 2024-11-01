@@ -5,7 +5,7 @@ import './Profile.css';
 import './App.css';
 
 function Profile() {
-    const { isAuthenticated, googleId } = useAuth();
+    const { isAuthenticated, googleId, user } = useAuth();
     const {userInfo, setUserInfo} = useState({})
     const [searchHistory, setSearchHistory] = useState([]);
 
@@ -48,11 +48,11 @@ function Profile() {
     return (
         <div className="profile-page">
             <section className="hero">
-                <h1>{userInfo.firstName} {userInfo.lastName}'s Profile</h1>
+                <h1>{user ? `${user.firstName} ${user.lastName}'s` : "Profile"} Profile</h1>
             </section>
             <section className="user-info">
-                <h3>Name: {userInfo.firstName || 'N/A'} {userInfo.lastName}</h3>
-                <h3>Email: {userInfo.email || 'N/A'}</h3>
+                <h3>Name: {user ? `${user.firstName} ${user.lastName}` : 'N/A'}</h3>
+                <h3>Email: {user ? user.email : 'N/A'}</h3>
             </section>
             <section className="search-history">
                 <div>
