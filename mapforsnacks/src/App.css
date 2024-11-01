@@ -76,17 +76,19 @@ input[type="text"]:focus {
 .dropdown-trigger img {
   position: absolute;
   block-size: 80px;
-  top: 30px;
-  right: 20px;
-  height: 70px;
+  top: 50px;
+  right: 30px;
+  z-index: 1000;
+  height: 80px;
   overflow: hidden;
   cursor: pointer
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 100px;
-  right: 20px;
+  top: 120px;
+  right: 30px;
+  z-index: 1000;
   background-color: #fff;
   border-radius: 25px;
   padding: 10px 20px;

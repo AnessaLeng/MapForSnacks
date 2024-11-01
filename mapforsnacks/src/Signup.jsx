@@ -8,18 +8,17 @@ function Signup() {
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
-        username: "",
+        email: "",
         password: "",
-        profile_image: null
     });
 
     const [errors, setErrors] = useState({});
 
     const handleChange = (event) => {
-        const { name, value, type, files } = event.target;
+        const { name, value } = event.target;
         setFormData({
             ...formData,
-            [name]: type === 'file' ? files[0] : value
+            [name]: value
         });
     };
 
@@ -43,7 +42,7 @@ function Signup() {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/signup', {
+                const response = await fetch('http://localhost:3000/signup', {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -81,17 +80,19 @@ function Signup() {
                     {errors.last_name && <div className="error-message">{errors.last_name}</div>}
                 </div><br/>
                 <div>
-                    <input type="text" className="form-input" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required/>
-                    {errors.username && <div className="error-message">{errors.username}</div>}
+                    <input type="text" className="form-input" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required/>
+                    {errors.email && <div className="error-message">{errors.email}</div>}
                 </div><br/>
                 <div>
                     <input type="password" className="form-input" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required/>
                     {errors.password && <div className="error-message">{errors.password}</div>}
                 </div><br/>
                 <div>
-                <label htmlFor="profile_image" className="form-label">Profile Image: </label>
+                {/*
+                    <label htmlFor="profile_image" className="form-label">Profile Image: </label>
                     <input type="file" className="form-file" name="profile_image" onChange={handleChange} required/>
                     {errors.profile_image && <div className="error-message">{errors.profile_image}</div>}
+                */}
                 </div><br/>
                 <button type="submit">Submit</button>
             </form>  
