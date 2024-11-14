@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from flask_cors import CORS
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
