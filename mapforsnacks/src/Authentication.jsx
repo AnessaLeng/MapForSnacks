@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
@@ -7,18 +7,38 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
 
+    useEffect(() => {
+        const storedToken = localStorage.getItem('accessToken');
+        if (storedToken) {
+            setToken(storedToken);
+            setIsAuthenticated(true);
+        }
+    }, []);
+
     const login = (userData, token) => {
-        setIsAuthenticated(true);
-        setUser(userData);
-        setToken(token);
-        localStorage.setItem('accessToken', token);
+        console.log("Redirecting to Login...");
+        if (token) {
+            setIsAuthenticated(true);
+            setUser(userData);
+            setToken(token);
+            localStorage.setItem('accessToken', token);
+            //localStorage.setItem('userData', JSON.stringify(userData));
+            console.log("User authenticated.");
+        } else {
+            console.error("No valid token found.");
+        }
     };
 
     const logout = () => {
-        setIsAuthenticated(false);
+        console.log("Logging out...");
         setUser(null);
         setToken(null);
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
+        setIsAuthenticated(false);
+        console.log("...logged out successfully!!");
     };
 
     const setError = (error) => {

@@ -171,3 +171,18 @@ h3 span {
   transform: translateY(-20px);
   transition: var(--speed) ease;
 }
+
+.logout-button button {
+  width: 50%;
+  height: 40px;
+  background-color: #be0a0afd;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}

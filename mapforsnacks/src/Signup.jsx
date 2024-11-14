@@ -1,65 +1,36 @@
 import React, { useState } from 'react';
 //import { useAuth } from './Authentication';
 //import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 import './Signup.css';
 import './App.css';
 
 function Signup() {
-    const [formData, setFormData] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-    });
-
-    const [errors, setErrors] = useState({});
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const validate = () => {
-        const newErrors = {};
-        Object.keys(formData).forEach((field) => {
-            if (!formData[field]) {
-                newErrors[field] = `${field.replace('_', ' ')} is required.`;
-            }
-        });
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (validate()) {
-            const formData = new FormData();
-            for (const key in formData) {
-                formData.append(key, formData[key])
-            }
-
-            try {
-                const response = await fetch('http://localhost:3000/signup', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    console.log("User created successfully!");
-                }
-                else {
-                    const errorData = await response.json();
-                    console.error("Error creating user: ", errorData);
-                }
-            }
-            catch (error) {
-                console.error("Error: ", error);
+    const [first_name, setFirstName] = useState('');
+    const [last_name, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        try {
+            const res = await axios.post('http://localhost:5000/signup', { first_name, last_name, email, password });
+            console.log(res.data);
+            setMessage(res.data.msg);
+        } catch (error) {
+            console.error('Error during signup:', error);
+            // Handle error and display appropriate message
+            if (error.response) {
+                // The request was made, but the server responded with an error code
+                setMessage(error.response.data.msg || 'Something went wrong!');
+            } else if (error.request) {
+                // The request was made, but no response was received
+                setMessage('No response from server. Please try again later.');
+            } else {
+                // Something else went wrong
+                setMessage('An unexpected error occurred.');
             }
         }
     };
@@ -70,35 +41,25 @@ function Signup() {
                 <h1>Create an Account</h1>
             </section>
             <div className="signup-form">
-            <form onSubmit={handleSubmit} method="POST" enctype="multipart/form-data">
+            <form onSubmit={handleSubmit} method="POST">
                 <div>
-                    <input type="text" className="form-input" name="first_name" placeholder="First Name" value={formData.first_name} onChange={handleChange} required/>
-                    {errors.first_name && <div className="error-message">{errors.first_name}</div>}
+                    <input type="text" className="form-input" name="first_name" placeholder="First Name" value={first_name} onChange={(e) => setFirstName(e.target.value)} required/>
                 </div><br/>
                 <div>
-                    <input type="text" className="form-input" name="last_name" placeholder="Last Name" value={formData.last_name} onChange={handleChange} required/>
-                    {errors.last_name && <div className="error-message">{errors.last_name}</div>}
+                    <input type="text" className="form-input" name="last_name" placeholder="Last Name" value={last_name} onChange={(e) => setLastName(e.target.value)} required/>
                 </div><br/>
                 <div>
-                    <input type="text" className="form-input" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required/>
-                    {errors.email && <div className="error-message">{errors.email}</div>}
+                    <input type="text" className="form-input" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
                 </div><br/>
                 <div>
-                    <input type="password" className="form-input" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required/>
-                    {errors.password && <div className="error-message">{errors.password}</div>}
-                </div><br/>
-                <div>
-                {/*
-                    <label htmlFor="profile_image" className="form-label">Profile Image: </label>
-                    <input type="file" className="form-file" name="profile_image" onChange={handleChange} required/>
-                    {errors.profile_image && <div className="error-message">{errors.profile_image}</div>}
-                */}
+                    <input type="password" className="form-input" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
                 </div><br/>
                 <button type="submit">Submit</button>
             </form>  
+            {message && <p>{message}</p>}
             </div>
         </div>
     );
-}
+};
 
 export default Signup;
