@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-//import { gapi } from 'gapi-script';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './Authentication';
 import MainPage from './MainPage';
@@ -60,7 +59,7 @@ function App() {
               ) : (
                 <div>
                   <li><DropdownItem img= {profile} alt = {"Profile"} link = {"/profile"} text = {"Profile"}/></li>
-                  <li><button onClick={logout}>Logout</button></li>
+                  <li className="logout-button"><button onClick={logout}>Logout</button></li>
                 </div>
               )}
               </div>
@@ -90,7 +89,7 @@ function DropdownItem(item) {
 }
 
 const AppWithProvider = () => (
-  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+  <GoogleOAuthProvider clientId={clientId}>
   <AuthProvider>
     <App />
   </AuthProvider>

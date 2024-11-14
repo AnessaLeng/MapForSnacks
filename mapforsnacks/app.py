@@ -120,11 +120,10 @@ def google_login():
 @app.route('/profile', methods=['GET'])
 @jwt_required()
 def get_profile():
-    # Get the identity of the current user from the JWT token
+    # Get the identity/email of the current user from the JWT token
     current_user = get_jwt_identity()
     user = users_collection.find_one({"email": current_user})
     if user:
-        # Return user data, exclude sensitive data (e.g., password)
         user_data = {
             "first_name": user["first_name"],
             "last_name": user["last_name"],
@@ -135,7 +134,7 @@ def get_profile():
         try:
             # Decode the JWT token to extract the user's info (if Google login)
             token = request.headers.get('Authorization').split(' ')[1]  # Extract the token from Authorization header
-            decoded_token = jwt.decode(token, options={"verify_signature": False})  # Decode without verifying signature
+            decoded_token = jwt.decode(token, options={"verify_signature": False})
 
             # Check if the decoded token contains Google login data
             first_name = decoded_token.get("given_name", "N/A")

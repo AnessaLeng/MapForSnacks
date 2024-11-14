@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './Authentication';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import './Profile.css';
 import './App.css';
 
@@ -11,6 +11,8 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchHistory, setSearchHistory] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -47,7 +49,7 @@ function Profile() {
     useEffect(() => {
         const fetchSearchHistory = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/search-history'); // Assuming this API exists
+                const response = await fetch('http://localhost:3000/api/search-history');
                 const data = await response.json();
                 setSearchHistory(data);
             }
@@ -63,7 +65,7 @@ function Profile() {
 
     const handleLogout = () => {
         logout();
-        Navigate('/login');  // Redirect to login page after logout
+        navigate('/login');  // Redirect to login page after logout
     };
 
 

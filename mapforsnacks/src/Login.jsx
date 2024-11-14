@@ -35,28 +35,27 @@ const Login = () => {
         } catch (error) {
             console.error('Error during login:', error);
             if (error.response) {
-            // Check if error.response is defined
-            setMessage(error.response.data.msg || 'Something went wrong!');
+                // Check if error.response is defined
+                setMessage(error.response.data.msg || 'Something went wrong!');
             } else if (error.request) {
-            // The request was made but no response was received
-            setMessage('No response from server. Please try again later.');
+                // The request was made but no response was received
+                setMessage('No response from server. Please try again later.');
             } else {
-            // Other types of errors (e.g., network issues, incorrect setup)
-            setMessage('An unexpected error occurred.');
+                setMessage('An unexpected error occurred.');
             }
         }
     };
 
     const handleGoogleSuccess = async (credentialResponse) => {
         const token = credentialResponse.credential;
-        console.log("Google Login Success! ID Token: ", token);
+        //console.log("Google Login Success! ID Token: ", token); // debugging
 
         try {
             const response = await axios.post('http://localhost:5000/api/auth/google-login', {
                 idToken: token,
             });
 
-            console.log('Google Login successful:', response.data);
+            //console.log('Google Login successful:', response.data); // debugging
 
             const accessToken = response.data.access_token;
             const userData = response.data.user;

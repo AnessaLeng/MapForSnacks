@@ -16,19 +16,29 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = (userData, token) => {
-        setIsAuthenticated(true);
-        setUser(userData);
-        setToken(token);
-        localStorage.setItem('accessToken', token);
-        localStorage.setItem('userData', JSON.stringify(userData));
+        console.log("Redirecting to Login...");
+        if (token) {
+            setIsAuthenticated(true);
+            setUser(userData);
+            setToken(token);
+            localStorage.setItem('accessToken', token);
+            //localStorage.setItem('userData', JSON.stringify(userData));
+            console.log("User authenticated.");
+        } else {
+            console.error("No valid token found.");
+        }
     };
 
     const logout = () => {
+        console.log("Logging out...");
         setUser(null);
         setToken(null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('userData');
+        localStorage.removeItem('authToken');
+        sessionStorage.removeItem('authToken');
         setIsAuthenticated(false);
+        console.log("...logged out successfully!!");
     };
 
     const setError = (error) => {
