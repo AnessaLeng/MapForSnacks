@@ -97,12 +97,12 @@ function Profile() {
             </section>
             <section className="search-history">
                 <div>
-                    <h3>Search History</h3>
+                    <h3>Recent</h3>
                     <table>
                         <thead>
                             <tr>
                                 <th>Searched</th>
-                                <th>Location</th>
+                                <th>Results</th>
                                 <th>Timestamp</th>
                             </tr>
                         </thead>

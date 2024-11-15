@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import { useAuth } from './Authentication';
-//import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Signup.css';
 import './App.css';
@@ -11,6 +11,7 @@ function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,6 +20,7 @@ function Signup() {
             const res = await axios.post('http://localhost:5000/signup', { first_name, last_name, email, password });
             console.log(res.data);
             setMessage(res.data.msg);
+            navigate('/login');
         } catch (error) {
             console.error('Error during signup:', error);
             // Handle error and display appropriate message
