@@ -1,60 +1,173 @@
 /* Map Page Styling */
 .map-page {
-    height: 100%;
+    display: flex;
+    height: 100vh;
     font-family: 'Montserrat', sans-serif;
-    text-align: center;
-    padding: 20px;
-    background-color: #f0f0f0;
+    background-color: #f3e6dc; 
 }
 
-/* Hero Section with Gradient */
-.map-page .hero {
-    background: linear-gradient(90deg, #25DB9A, #256BDB); /* Gradient background */
-    color: white;
-    font-size: 1.8rem;
-    font-weight: bold;
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background: #e0e0e0; 
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* Sidebar Title */
+.sidebar h2 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: left;
+    width: 100%;
+}
+
+
+/* Search Section */
+.search-section {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #0d625e; 
+    padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.search-section select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    cursor: pointer;
+    appearance: none;
+}
+
+/* Arrow for Dropdowns */
+.search-section select::after {
+    content: '▼';
+    float: right;
+    padding-right: 10px;
+    color: #888;
+}
+
+
+.directions {
+    width: 90%;
+    margin-top: 80px;
+  margin-bottom: 60px;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    background-color: #0d625e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add slight shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.directions h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.directions input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Help/Feedback Section */
+.help-feedback {
+
+    width: 90%;
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    background-color: #0d625e; /* Kept original color */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 50px;
+}
+
+.help-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.help-item img.icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Map Section */
+.map-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero {
+    font-size: 1.5rem;
+    color: #b53d00;
+    font-weight: bold;
+    text-align: left;
     margin-bottom: 20px;
 }
 
-/* Enhanced Search Bar */
-.search-bar {
-    width: 80%;
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.search-bar:focus {
-    border-color: #25A5DB;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Map Container */
+/* Map */
 #map {
     width: 100%;
-    height: 500px;
+    height: calc(100vh - 120px);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    margin-top: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .search-bar {
-        width: 90%;
-        font-size: 0.9rem;
+    .map-page {
+        flex-direction: column;
     }
 
-    .map-page .hero {
-        font-size: 1.5rem;
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid #b0b0b0;
+    }
+
+    #map {
+        height: 400px;
     }
 }

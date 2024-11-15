@@ -1,57 +1,85 @@
+/* Signup Page Styling */
 .signup-page {
     height: 100%;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
     padding: 20px;
-    background-color: #f0f0f0;
+    background-color: #f1e3ce; /* Light beige background */
 }
 
+/* Hero Section for the Signup Page */
 .signup-page .hero {
-    background: linear-gradient(90deg, #25DB9A, #256BDB); /* Gradient background */
+    background: linear-gradient(90deg, #1D8BD1, #256BDB); /* Enhanced blue gradient */
     color: white;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+/* Signup Form Container */
 .signup-form {
     width: 100%;
-    margin-top: 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* Input Fields */
 .signup-form .form-input {
-    width: 40%;
+    width: 90%;
+    max-width: 400px;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    outline: none;
+    background-color: #f7f7f7; /* Soft background for inputs */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.signup-form .form-file {
-    width: 40%;
+.signup-form .form-input:focus {
+    background-color: #e8f0fe; /* Light blue on focus */
+    transform: scale(1.02);
 }
 
-.signup-form .form-label {
-    font-size: 18px;
-    text-align: left;
-    font-weight: 400;
-    margin-left: 125px;
-}
-
+/* Submit Button */
 .signup-form button {
-    width: 40%;
+    width: 90%;
+    max-width: 400px;
     height: 50px;
-    background-color: #0d625e;
+    background-color: #1D8BD1; /* Match gradient color */
     color: white;
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
+    font-size: 1.1rem;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .signup-form button:hover {
-    background-color: #72DBDA;
+    background-color: #125a99; /* Darker blue on hover */
     transform: scale(1.05);
+}
+
+/* Message Styling */
+.signup-form p {
+    color: #256BDB;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 15px;
 }

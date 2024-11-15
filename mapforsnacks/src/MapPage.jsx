@@ -3,16 +3,20 @@ import SearchBar from './Searchbar';
 import './MapPage.css';
 import { mockData } from './mock_data';
 
+// Importing images
+import helpIcon from './images/question.png';
+import feedbackIcon from './images/feedback.png';
+
 const MapPage = () => {
     const [map, setMap] = useState(null);
-    const [infoWindow, setInfoWindow] = useState(null); // To manage the info window
-    const [filteredMachines, setFilteredMachines] = useState(mockData); // Start with mock data
+    const [infoWindow, setInfoWindow] = useState(null);
+    const [filteredMachines, setFilteredMachines] = useState(mockData);
 
     useEffect(() => {
         const loadGoogleMapsScript = () => {
             if (!window.google) {
                 const script = document.createElement('script');
-                script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB2cgUyYlI3DBdzF_GA9WLi6uMoh75ONsY&libraries=places`;
+                script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
                 script.async = true;
                 script.onload = () => initMap();
                 script.onerror = () => console.error("Failed to load Google Maps script");
@@ -27,14 +31,12 @@ const MapPage = () => {
     const initMap = () => {
         if (!map && window.google && window.google.maps) {
             const mapOptions = {
-                center: { lat: 35.3075, lng: -80.7294 }, // Center map on UNCC campus
+                center: { lat: 35.3075, lng: -80.7294 },
                 zoom: 15,
             };
             const mapInstance = new window.google.maps.Map(document.getElementById('map'), mapOptions);
             setMap(mapInstance);
             addMarkers(mapInstance, filteredMachines);
-        } else if (!window.google) {
-            console.error("Google Maps not loaded");
         }
     };
 
@@ -72,8 +74,8 @@ const MapPage = () => {
             machine.items.some((item) => item.toLowerCase().includes(lowerCaseQuery))
         );
         setFilteredMachines(filtered);
-        clearMarkers(); // Clear existing markers before adding new ones
-        addMarkers(map, filtered); // Update markers based on filtered results
+        clearMarkers();
+        addMarkers(map, filtered);
     };
 
     const clearMarkers = () => {
@@ -85,13 +87,49 @@ const MapPage = () => {
 
     return (
         <div className="map-page">
-            <section className="hero">
-                <h1>Vending Machines Map</h1>
-            </section>
-            <div className="search-bar">
-                <SearchBar onFilterChange={handleFilterChange} />
+            <div className="sidebar">
+                <h2>Search By item or building...</h2>
+                <div className="search-section">
+                    <select onChange={(e) => handleFilterChange(e.target.value)}>
+                        <option value="">Building</option>
+                    </select>
+                    <select onChange={(e) => handleFilterChange(e.target.value)}>
+                        <option value="">Snack Type</option>
+                    </select>
+                    <select onChange={(e) => handleFilterChange(e.target.value)}>
+                        <option value="">Food Type</option>
+                    </select>
+                </div>
+
+                <div className="directions">
+                    <div className="icon-container">
+                        <i className="fas fa-car"></i>
+                        <i className="fas fa-bicycle"></i>
+                        <i className="fas fa-walking"></i>
+                    </div>
+                    <h3>Directions</h3>
+                    <input type="text" placeholder="From" className="button" />
+                    <input type="text" placeholder="To" className="button" />
+                    <button className="button">Go!</button>
+                </div>
+
+                <div className="help-feedback">
+                    <div className="help-item">
+                        <img src={helpIcon} alt="Help Icon" className="icon" />
+                        <span>Help</span>
+                    </div>
+                    <div className="help-item">
+                        <img src={feedbackIcon} alt="Feedback Icon" className="icon" />
+                        <span>Feedback</span>
+                    </div>
+                </div>
             </div>
-            <div id="map" className="map-container"></div>
+            <div className="map-container">
+                <section className="hero">
+                    <h1>Vending Machines Map</h1>
+                </section>
+                <div id="map"></div>
+            </div>
         </div>
     );
 };

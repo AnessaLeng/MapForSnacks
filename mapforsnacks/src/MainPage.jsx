@@ -1,9 +1,8 @@
 import './MainPage.css';
 import React from 'react';
 import { useAuth } from './Authentication';
-import { Link, useNavigate } from 'react-router-dom'; // For navigation to the map page
-import './MainPage.css'; //CSS for main page
-import './App.css';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const MainPage = () => {
   const { isAuthenticated, login, logout } = useAuth(); 
@@ -21,50 +20,49 @@ const MainPage = () => {
   }
 
   return (
-  <div className="main-page">
-      {/* Website Title with Snack Images */}
+    <div className="main-page">
+      {/* Navigation Links */}
+      <nav className="nav-links">
+        <button onClick={scrollToAbout} className="nav-link">About Us</button>
+        {!isAuthenticated ? (
+          <>
+            <Link to="/login" className="nav-link">Log in</Link>
+            <Link to="/signup" className="nav-link">Sign up</Link>
+          </>
+        ) : (
+          <>
+            <Link to="/profile" className="nav-link">Profile</Link>
+            <button onClick={logout} className="nav-link">Logout</button>
+          </>
+        )}
+      </nav>
+
+      {/* Vending Machine Images */}
+      <div className="hero-images">
+        <img src="/images/vending-machine2.png" alt="Vending Machine 1" className="hero-image"/>
+        <img src="/images/vending-machine.png" alt="Vending Machine 2" className="hero-image"/>
+        <img src="/images/vending-machine3.png" alt="Vending Machine 3" className="hero-image"/>
+      </div>
+
+      {/* Website Title */}
       <header className="title-section">
-      <img src="/images/chips.png" alt="Left Snack" className="snack-image" />
-      <h1>Map For Snacks</h1>
-      <img src="/images/soda.png" alt="Right Snack" className="snack-image" />
+        <h1>MAP FOR SNACKS</h1>
       </header>
 
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <button onClick={scrollToAbout} className="hero-button">
-            About Us
-          </button>
-          <Link to="/map">
-            <button className="hero-button">Find Vending Machines</button>
-          </Link>
-          {!isAuthenticated ? (
-            <div className="hero-content">
-              <Link to="/signup">
-              <button className="hero-button">Signup</button>
-              </Link>
-              <button onClick={loginPage} className="hero-button">
-                Login
-              </button>
-            </div>
-            ) : (
-            <div className="hero-content">
-              <Link to="/profile">
-                <button className="hero-button">Go to Profile</button>
-              </Link>
-              <button onClick={logout} className="hero-button">
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
+      
 
-      <br/><div className="hero-images">
-          <img src="/images/vending-machine2.png" alt="vending-machine" className="hero-image"/>
-          <img src="/images/vending-machine.png" alt="vending-machine" className="hero-image"/>
-          <img src="/images/vending-machine3.png" alt="vending-machine" className="hero-image"/>
-      </div>      
+      
+
+      {/* Main Description and Button */}
+      <section className="description">
+        <p>
+          Our website helps you find snacks in vending machines across the UNCC campus.
+          You can locate vending machines in real-time and check what snacks are available.
+        </p>
+        <Link to="/map">
+          <button className="hero-button">Find Vending Machines</button>
+        </Link>
+      </section>
 
       {/* About Section */}
       <section id="about" className="about-section">

@@ -14,6 +14,8 @@ import home from '../src/images/home.png';
 import signup from '../src/images/add-account.png';
 import loginimg from '../src/images/login.png';
 import './App.css';
+import './MainPage.css';
+
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
