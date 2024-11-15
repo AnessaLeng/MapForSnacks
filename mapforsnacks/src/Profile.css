@@ -107,6 +107,7 @@ table tr:hover td {
     background-color: #be0a0afd;
     color: white;
     padding: 12px 20px;
+    margin-top: 15px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
