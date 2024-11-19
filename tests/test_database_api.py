@@ -1,7 +1,5 @@
 import unittest
 from app import app
-
-
 from database import app
 
 class TestDatabaseAPI(unittest.TestCase):
@@ -10,7 +8,7 @@ class TestDatabaseAPI(unittest.TestCase):
     def setUpClass(cls):
         cls.client = app.test_client() 
         cls.client.testing = True
-        # app.config['SERVER_NAME'] = '127.0.0.1:5000'
+        # app.config['SERVER_NAME'] = "127.0.0.1:5000"
 
     def test_get_buildings(self):
         response = self.client.get('/api/buildings')
