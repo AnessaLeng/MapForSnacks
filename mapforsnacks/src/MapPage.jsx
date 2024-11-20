@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './Searchbar';
+import axios from 'axios';
 import './MapPage.css';
 import { mockData } from './mock_data';
 
@@ -11,6 +12,11 @@ const MapPage = () => {
     const [map, setMap] = useState(null);
     const [infoWindow, setInfoWindow] = useState(null);
     const [filteredMachines, setFilteredMachines] = useState(mockData);
+
+    const [selectedBuilding, setSelectedBuilding] = useState('');
+    const [selectedSnackType, setSelectedSnackType] = useState('');
+    const [selectedFoodType, setSelectedFoodType] = useState('');
+
 
     useEffect(() => {
         const loadGoogleMapsScript = () => {
@@ -67,7 +73,7 @@ const MapPage = () => {
         }
     };
 
-    const handleFilterChange = (query) => {
+    const handleFilterChange = (query, filterType) => {
         const lowerCaseQuery = query.toLowerCase();
         const filtered = mockData.filter((machine) =>
             machine.location.toLowerCase().includes(lowerCaseQuery) ||
@@ -76,12 +82,56 @@ const MapPage = () => {
         setFilteredMachines(filtered);
         clearMarkers();
         addMarkers(map, filtered);
+        
+        if (filterType === 'building') {
+            setSelectedBuilding(query);
+        } else if (filterType === 'snack') {
+            setSelectedSnackType(query);
+        } else if (filterType === 'food') {
+            setSelectedFoodType(query);
+        }
+
+        saveSearchHistory(query, filterType, filtered);
     };
 
     const clearMarkers = () => {
         if (map && map.markers) {
             map.markers.forEach(marker => marker.setMap(null));
             map.markers = [];
+        }
+    };
+
+    const saveSearchHistory = async (searchedTerm, filterType, filteredMachines) => {
+        let searchTerm = '';
+        const locations = filteredMachines.map(machine => machine.location);
+
+        if (filterType === 'building') {
+            searchTerm = `Building: ${searchedTerm}`;
+        } else if (filterType === 'snack') {
+            searchTerm = `Snack Type: ${searchedTerm}`;
+        } else if (filterType === 'food') {
+            searchTerm = `Food Type: ${searchedTerm}`;
+        }
+
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/search-history',
+                {
+                    searched_term: searchedTerm,
+                    locations: locations,
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log('Search history saved:', response.data);
+        } catch (error) {
+            console.error("Error saving search history:", error);
         }
     };
 

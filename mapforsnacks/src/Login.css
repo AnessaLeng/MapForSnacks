@@ -1,6 +1,5 @@
 /* Overall page styling */
 .login-page {
-    height: 100vh;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
     padding: 20px;
@@ -17,7 +16,6 @@
     color: white;
     font-size: 3rem;
     font-weight: bold;
-    padding: 30px;
     width: 80%;
     max-width: 800px;
     text-align: center;
@@ -80,7 +78,7 @@
 }
 
 .google-login {
-    width: 46%;
+    width: 45%;
     max-width: 400px;
     height: 52px;
     padding-top: 12px;

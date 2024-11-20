@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useAuth } from './Authentication';
 import { useNavigate } from 'react-router-dom';
+import FlashMessage from './FlashMessage';
 import axios from 'axios';
 import './Login.css';
 import './App.css';
@@ -10,15 +11,20 @@ const Login = () => {
     const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
     const [token, setToken] = useState('');
+    const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
+
     const navigate = useNavigate();
+
+    const setMessage = (message, type) => {
+        sessionStorage.setItem('flashMessage', JSON.stringify({ message, type }));
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const res = await axios.post('http://localhost:5000/login', { email, password });
-            console.log('Login success:', res.data);
+            // console.log('Login success:', res.data);
 
             const accessToken = res.data.access_token;
             const userData = res.data.user;
@@ -29,33 +35,38 @@ const Login = () => {
 
             login(userData, accessToken);
 
-            setMessage("Login successful!");
+            setMessage("Login successful!", "success");
             // Redirect to profile after successful login
             navigate('/profile');
         } catch (error) {
-            console.error('Error during login:', error);
+            // console.error('Error during login:', error);
             if (error.response) {
-                // Check if error.response is defined
-                setMessage(error.response.data.msg || 'Something went wrong!');
+                // The request was made, but the server responded with an error code
+                if (error.response.data.msg.includes('400') || error.response.data.msg.includes('404')) {
+                    setFlashMessage({message: 'Email or password was incorrectly entered. Try again.', type: 'error'});
+                } else {
+                    setFlashMessage({message: error.response.data.msg || '400 Error', type: 'error'});
+                }
             } else if (error.request) {
-                // The request was made but no response was received
-                setMessage('No response from server. Please try again later.');
+                // The request was made, but no response was received
+                setFlashMessage({message: 'No response from server. Please try again later.', type: 'error'});
             } else {
-                setMessage('An unexpected error occurred.');
+                // Something else went wrong
+                setFlashMessage({message: 'An unexpected error occurred.', type: 'error'});
             }
         }
     };
 
     const handleGoogleSuccess = async (credentialResponse) => {
         const token = credentialResponse.credential;
-        //console.log("Google Login Success! ID Token: ", token); // debugging
+        // console.log("Google Login Success! ID Token: ", token); // debugging
 
         try {
             const response = await axios.post('http://localhost:5000/api/auth/google-login', {
                 idToken: token,
             });
 
-            //console.log('Google Login successful:', response.data); // debugging
+            // console.log('Google Login successful:', response.data); // debugging
 
             const accessToken = response.data.access_token;
             const userData = response.data.user;
@@ -64,18 +75,18 @@ const Login = () => {
             localStorage.setItem('authToken', accessToken);
             login(userData, accessToken);
 
-            setMessage("Google login successful!");
+            setMessage('Google login successful!', 'success');
             // Redirect to profile after Google login
             navigate('/profile');
         } catch (error) {
             console.error('Google login error:', error);
-            setMessage('Google authentication failed.');
+            setFlashMessage({message: 'Google authentication failed.', type: 'error'});
         }
     };
 
     const handleGoogleFailure = (error) => {
         console.error("Google login failed: ", error);
-        setMessage("Google login failed.");
+        setFlashMessage({message: "Google login failed.", type: "error"});
     };
 
     return (
@@ -83,6 +94,20 @@ const Login = () => {
             <section className="hero">
                 <h1>Login</h1>
             </section>
+            <FlashMessage />
+            {flashMessage.message && (
+                <div style={{
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    marginBottom: '10px',
+                    backgroundColor: flashMessage.type === 'success' ? 'green' : 'red',
+                }}>
+                    <p>{flashMessage.message}</p>
+                </div>
+            )}
             <div className="login-form">
                 <form onSubmit={handleSubmit} method="POST">
                     <div>
@@ -93,7 +118,6 @@ const Login = () => {
                     </div><br/>
                     <button type="submit">Submit</button><br/><br/>
                 </form>
-                {message && <p>{message}</p>}
                 {token && <p>Your token: {token}</p>}
                 <GoogleOAuthProvider clientId='988046540404-rvnhbcvmi6ksqda0vgnj5gv0g8goebs2.apps.googleusercontent.com'>
                     <div className="google-login">

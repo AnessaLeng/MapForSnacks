@@ -4,6 +4,7 @@
 
 .App {
   text-align: center;
+  padding-top: 60px;
 }
 
 .App-logo {
@@ -73,38 +74,6 @@ input[type="text"]:focus {
   outline: none;
 }
 
-.dropdown-trigger img {
-  position: absolute;
-  block-size: 80px;
-  top: 50px;
-  right: 30px;
-  z-index: 1000;
-  height: 80px;
-  overflow: hidden;
-  cursor: pointer
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 120px;
-  right: 30px;
-  z-index: 1000;
-  background-color: #fff;
-  border-radius: 25px;
-  padding: 10px 20px;
-  width: 200px;
-}
-
-.dropdown-menu::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  right: 20px;
-  height: 20px;
-  width: 20px;
-  transform: rotate(45deg);
-}
-
 h3 {
   width: 100%;
   text-align: center;
@@ -119,70 +88,51 @@ h3 span {
   font-weight: 400;
 }
 
-.dropdown-menu ul li {
-  padding: 6px 10px;
-  padding-bottom: 5px;
-  border-top: 1px solid rgba(0, 0, 0, 0.082);
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  z-index: 10;
+  padding: 10px;
 }
 
-.dropdown-menu ul li:hover a {
+.navbar-list {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-list li {
+  padding: 6px 10px;
+  padding-bottom: 5px;
+  margin: 0 15px;
+}
+
+.navbar-list li:hover a, .navbar-list li:hover button {
   color: rgb(212, 33, 9);
   cursor: pointer;
 }
 
-.dropdown-menu ul li:hover img {
-  opacity: 1;
-  cursor: pointer;
+.navbar-list li a, .navbar-list li button {
+  text-decoration: none; 
+  color: black;
+  font-family: 'Roboto', sans-serif; 
+  font-size: 16px; 
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
-.dropdownItem {
-  display: flex;
-  margin: 10px auto;
-}
-
-.dropdownItem img {
-  max-width: 40px;
-  max-height: 25px;
-  margin-top: 6px;
-  margin-right: 5px;
-  opacity: 0.5;
-  transition: var(--speed);
-}
-
-.dropdownItem a {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 18px;
-  max-width: 100px;
-  margin-top: 10px;
-  margin-left: 10px;
-  transition: var(--speed);
-}
-
-.dropdown-menu.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  transition: var(--speed) ease;
-}
-
-.dropdown-menu.inactive {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-20px);
-  transition: var(--speed) ease;
-}
-
-.logout-button button {
-  width: 50%;
-  height: 40px;
-  background-color: #be0a0afd;
-  color: white;
-  padding: 10px 20px;
+.navbar button {
+  background-color: white;
+  padding: 5px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  align-self: center;
 }

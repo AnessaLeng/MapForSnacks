@@ -101,6 +101,18 @@ table tr:hover td {
     background-color: #e0f7fa; /* Row hover effect */
 }
 
+.delete-button {
+    background-color: #f44336; 
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
 .logout-section button {
     width: 38%;
     height: 50px;
