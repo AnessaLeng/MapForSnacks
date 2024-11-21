@@ -1,0 +1,215 @@
+/* Map Page Styling */
+.map-page {
+    display: flex;
+    height: 100vh;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f3e6dc; 
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background: #e0e0e0; 
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* Sidebar Title */
+.sidebar h2 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: left;
+    width: 100%;
+}
+
+
+/* Search Section */
+.search-section {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #0d625e; 
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.search-section select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    cursor: pointer;
+    appearance: none;
+}
+
+/* Arrow for Dropdowns */
+.search-section select::after {
+    content: '▼';
+    float: right;
+    padding-right: 10px;
+    color: #888;
+}
+
+
+.directions {
+    width: 90%;
+    margin-top: 80px;
+  margin-bottom: 60px;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    background-color: #0d625e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add slight shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.directions h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.directions input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Help/Feedback Section */
+.help-feedback {
+
+    width: 90%;
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    background-color: #0d625e; /* Kept original color */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 50px;
+}
+
+.help-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.help-item img.icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/* Map Section */
+.map-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.hero {
+    font-size: 1.5rem;
+    color: #b53d00;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* Map */
+#map {
+    width: 100%;
+    height: calc(100vh - 120px);
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .map-page {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid #b0b0b0;
+    }
+
+    #map {
+        height: 400px;
+    }
+}
+
+/* Snack Table Container */
+.snack-table-container {
+    margin: 20px auto; /* Center the table */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    align-self: flex-end; /* This aligns the snack table at the bottom */
+}
+
+/* Snack Table */
+.snack-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove gaps between cells */
+    text-align: left;
+}
+
+/* Table Headers and Rows */
+.snack-table th,
+.snack-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd; /* Add light border for row separation */
+}
+
+.snack-table th {
+    background-color: #4285f4; /* Blue header background */
+    color: white;
+    font-weight: bold;
+}
+
+/* Hover Effect for Table Rows */
+.snack-table tr:hover {
+    background-color: #f1f1f1; /* Light gray hover effect */
+}
+
+.map {
+    flex-grow: 1; /* Allow the map to grow and fill space */
+}
+
