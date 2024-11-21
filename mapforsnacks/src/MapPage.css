@@ -134,7 +134,7 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -171,3 +171,45 @@
         height: 400px;
     }
 }
+
+/* Snack Table Container */
+.snack-table-container {
+    margin: 20px auto; /* Center the table */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    align-self: flex-end; /* This aligns the snack table at the bottom */
+}
+
+/* Snack Table */
+.snack-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove gaps between cells */
+    text-align: left;
+}
+
+/* Table Headers and Rows */
+.snack-table th,
+.snack-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd; /* Add light border for row separation */
+}
+
+.snack-table th {
+    background-color: #4285f4; /* Blue header background */
+    color: white;
+    font-weight: bold;
+}
+
+/* Hover Effect for Table Rows */
+.snack-table tr:hover {
+    background-color: #f1f1f1; /* Light gray hover effect */
+}
+
+.map {
+    flex-grow: 1; /* Allow the map to grow and fill space */
+}
+
