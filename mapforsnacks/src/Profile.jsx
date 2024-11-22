@@ -53,10 +53,20 @@ function Profile() {
 
     useEffect(() => {
         const fetchFavorites = async () => {
+            const token = localStorage.getItem('authToken');
+
             try {
-                const response = await fetch('http://localhost:3000/api/favorites');
-                const data = await response.json();
-                setFavorites(data);
+                const response = await fetch('http://localhost:3000/api/favorites', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setFavorites(data);
+                } else {
+                    throw new Error('Error fetching favorites');
+                }
             }
             catch (error) {
                 console.error('500 Error: Unable to fetch favorites: ', error);
@@ -65,29 +75,28 @@ function Profile() {
 
         const fetchSearchHistory = async () => {
             const token = localStorage.getItem('authToken');
-            
+
             try {
                 const response = await fetch('http://localhost:3000/api/search-history', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    setSearchHistory(data);
-                } else {
-                    throw new Error('Error fetching search history');
+
+                if (!response.ok) {
+                    throw new Error(`Error fetching search history: ${response.statusText}`);
                 }
+                const data = await response.json();
+                setSearchHistory(data);
             } catch (error) {
-                console.error('Error fetching search history:', error);
-                setFlashMessage({message: "Failed to load search history.", type: "error"});
+                console.error('Error fetching search history: ', error);
+                //setFlashMessage({message: "Failed to load search history.", type: "error"});
             }
         };
 
-        if (isAuthenticated || googleId) {
-            fetchFavorites(); // Fetch favorites if authenticated
-            fetchSearchHistory(); // Fetch search history if authenticated
-        }
+        fetchFavorites(); // Fetch favorites if authenticated
+        fetchSearchHistory(); // Fetch search history if authenticated
+
     }, [isAuthenticated, googleId]);
 
     const handleDeleteFavorite = async (favoriteId) => {
@@ -152,15 +161,15 @@ function Profile() {
                                 <th>Building</th>
                                 <th>Location</th>
                                 <th>Timestamp</th>
-                                <th></th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             {favorites.length > 0 ? (
                                 favorites.map((entry, index) => (
                                     <tr key={index}>
-                                        <td>{entry.building}</td>
-                                        <td>{entry.location}</td>
+                                        <td>{entry.building_name}</td>
+                                        <td>Latitude: {entry.lat}, Longitude: {entry.lng}</td>
                                         <td>{new Date(entry.timestamp).toLocaleString()}</td>
                                         <td>
                                             <button 
@@ -184,8 +193,8 @@ function Profile() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Query</th>
-                                <th>Locations</th>
+                                <th>Vending Machine</th>
+                                <th>Snack</th>
                                 <th>Timestamp</th>
                             </tr>
                         </thead>
@@ -193,8 +202,8 @@ function Profile() {
                             {searchHistory.length > 0 ? (
                                 searchHistory.map((entry, index) => (
                                     <tr key={index}>
-                                        <td>{entry.searched_query}</td>
-                                        <td>{entry.location}</td>
+                                        <td>{entry.vending_id}</td>
+                                        <td>{entry.snack_id}</td>
                                         <td>{new Date(entry.timestamp).toLocaleString()}</td>
                                     </tr>
                                 ))

@@ -4,7 +4,7 @@
     font-family: 'Montserrat', sans-serif;
     text-align: center;
     padding: 20px;
-    background-color: #f0f0f0;
+    background-color: #f1e3ce;
 }
 
 /* Header with Gradient Background */
@@ -17,7 +17,16 @@
     text-align: center;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    margin-bottom: 20px;
+    max-width: 900px;
+}
+
+.profile-page .hero {
+    color: #b53d00;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 /* Profile Information Card */
@@ -52,7 +61,7 @@
 }
 
 /* Search History Section */
-.search-history {
+.search-history, .favorites {
     margin-top: 40px;
     padding: 20px;
     background-color: #ffffff;
@@ -63,7 +72,7 @@
     margin-right: auto;
 }
 
-.search-history h3 {
+.search-history h3, .favorites h3 {
     font-size: 1.5rem;
     font-weight: bold;
     color: #256BDB;
@@ -119,7 +128,7 @@ table tr:hover td {
     background-color: #be0a0afd;
     color: white;
     padding: 12px 20px;
-    margin-top: 15px;
+    margin-top: 30px;
     border: none;
     border-radius: 8px;
     cursor: pointer;

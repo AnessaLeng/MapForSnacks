@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-//import { useAuth } from './Authentication';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { useAuth } from './Authentication';
 import { useNavigate } from 'react-router-dom';
 import FlashMessage from './FlashMessage';
 import axios from 'axios';
@@ -7,10 +8,12 @@ import './Signup.css';
 import './App.css';
 
 function Signup() {
+    const { login } = useAuth();
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [token, setToken] = useState('');
     const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
 
     const navigate = useNavigate();
@@ -50,6 +53,38 @@ function Signup() {
         }
     };
 
+    const handleGoogleSuccess = async (credentialResponse) => {
+        const token = credentialResponse.credential;
+        // console.log("Google Login Success! ID Token: ", token); // debugging
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/google-login', {
+                idToken: token,
+            });
+
+            // console.log('Google Login successful:', response.data); // debugging
+
+            const accessToken = response.data.access_token;
+            const userData = response.data.user;
+
+            setToken(accessToken); // Store Google access token in state or localStorage
+            localStorage.setItem('authToken', accessToken);
+            login(userData, accessToken);
+
+            setMessage('Google login successful!', 'success');
+            // Redirect to profile after Google login
+            navigate('/profile');
+        } catch (error) {
+            console.error('Google login error:', error);
+            setFlashMessage({message: 'Google authentication failed.', type: 'error'});
+        }
+    };
+
+    const handleGoogleFailure = (error) => {
+        console.error("Google login failed: ", error);
+        setFlashMessage({message: "Google login failed.", type: "error"});
+    };
+
     return (
         <div className="signup-page">
             <section className="hero">
@@ -85,6 +120,15 @@ function Signup() {
                 </div><br/>
                 <button type="submit">Submit</button>
             </form>  
+            {token && <p>Your token: {token}</p>}
+            <GoogleOAuthProvider clientId='988046540404-rvnhbcvmi6ksqda0vgnj5gv0g8goebs2.apps.googleusercontent.com'>
+                    <div className="google-login">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onFailure={handleGoogleFailure}
+                        />
+                    </div>
+                </GoogleOAuthProvider>
             </div>
         </div>
     );
