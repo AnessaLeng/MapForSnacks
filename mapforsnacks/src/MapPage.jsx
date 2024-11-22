@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './Searchbar';
+import axios from 'axios';
 import './MapPage.css';
 import { mockData } from './mock_data';
 
@@ -11,6 +12,13 @@ const MapPage = () => {
     const [map, setMap] = useState(null);
     const [infoWindow, setInfoWindow] = useState(null);
     const [filteredMachines, setFilteredMachines] = useState(mockData);
+
+    const [selectedBuilding, setSelectedBuilding] = useState('');
+    const [selectedSnackType, setSelectedSnackType] = useState('');
+    const [selectedFoodType, setSelectedFoodType] = useState('');
+    const [favorites, setFavorites] = useState([]);
+    const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
+
 
     useEffect(() => {
         const loadGoogleMapsScript = () => {
@@ -51,6 +59,13 @@ const MapPage = () => {
                 });
 
                 marker.addListener('click', () => {
+
+                const favoritesButton = `
+                    <button id="favorite-btn" style="margin-top: 10px; background-color: #256BDB; color: white; padding: 8px; border-radius: 5px; cursor: pointer;">
+                    Add to Favorites
+                    </button>
+                `;
+
                     infoWindowInstance.setContent(`
                         <div>
                             <h2>${machine.location}</h2>
@@ -58,16 +73,24 @@ const MapPage = () => {
                             <a href="https://www.google.com/maps/dir/?api=1&destination=${machine.lat},${machine.lng}" 
                                target="_blank" 
                                rel="noopener noreferrer">Show in Google Maps</a>
+                               ${favoritesButton}
                         </div>
                     `);
                     infoWindowInstance.open(mapInstance, marker);
-                });
+
+                    const favoriteBtn = document.getElementById("favorite-btn");
+                    if (favoriteBtn) {
+                        favoriteBtn.addEventListener("click", () => {
+                        handleAddFavorite(machine);  // Add favorite when the button is clicked
+                        });
+                    }
+                    });
             });
             setInfoWindow(infoWindowInstance);
         }
     };
 
-    const handleFilterChange = (query) => {
+    const handleFilterChange = (query, filterType) => {
         const lowerCaseQuery = query.toLowerCase();
         const filtered = mockData.filter((machine) =>
             machine.location.toLowerCase().includes(lowerCaseQuery) ||
@@ -76,12 +99,82 @@ const MapPage = () => {
         setFilteredMachines(filtered);
         clearMarkers();
         addMarkers(map, filtered);
+        
+        if (filterType === 'building') {
+            setSelectedBuilding(query);
+        } else if (filterType === 'snack') {
+            setSelectedSnackType(query);
+        } else if (filterType === 'food') {
+            setSelectedFoodType(query);
+        }
+
+        saveSearchHistory(query, filterType, filtered);
     };
 
     const clearMarkers = () => {
         if (map && map.markers) {
             map.markers.forEach(marker => marker.setMap(null));
             map.markers = [];
+        }
+    };
+
+    const handleAddFavorite = async (building) => {
+        const token = localStorage.getItem('authToken');
+        try {
+          // Make an API request to add the favorite
+          const response = await axios.post('http://localhost:3000/api/favorites', {
+            lat: building.lat,
+            lon: building.lng,
+            building_name: building.building_name,  // Send the building name as well
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+      
+          if (response.status === 200) {
+            // Add the new favorite to the state directly
+            const newFavorite = response.data;  // Assuming the server returns the new favorite
+            setFavorites(prevFavorites => [newFavorite, ...prevFavorites]); // Prepend to the list
+            setFlashMessage({ message: "Favorite added successfully.", type: "success" });
+          }
+        } catch (error) {
+          console.error('Error adding favorite:', error);
+          setFlashMessage({ message: "Failed to add favorite. Please try again.", type: "error" });
+        }
+      };
+
+    const saveSearchHistory = async (searchedTerm, filterType, filteredMachines) => {
+        let searchTerm = '';
+        const locations = filteredMachines.map(machine => machine.location);
+
+        if (filterType === 'building') {
+            searchTerm = `Building: ${searchedTerm}`;
+        } else if (filterType === 'snack') {
+            searchTerm = `Snack Type: ${searchedTerm}`;
+        } else if (filterType === 'food') {
+            searchTerm = `Food Type: ${searchedTerm}`;
+        }
+
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/search-history',
+                {
+                    searched_term: searchedTerm,
+                    locations: locations,
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log('Search history saved:', response.data);
+        } catch (error) {
+            console.error("Error saving search history:", error);
         }
     };
 

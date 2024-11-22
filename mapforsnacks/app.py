@@ -5,6 +5,8 @@ from google.auth.transport import requests
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
+from datetime import datetime
+from bson import ObjectId
 
 app = Flask(__name__)
 CORS(app)
@@ -22,6 +24,8 @@ buildings_collection = db["buildings"]
 snacks_collection = db["snacks"]
 machine_collection = db["machine"]
 users_collection = db["users"]
+search_history_collection = db["history"]
+favorites_collection = db["favorites"]
 
 # Building data endpoint
 @app.route('/api/buildings', methods=['GET'])
@@ -148,7 +152,83 @@ def get_profile():
             return jsonify(user_data), 200
         except Exception as e:
             return jsonify({"msg": "User not found"}), 404
-        
+
+@app.route('/search-history', methods=['POST'])
+@jwt_required()
+def log_search_history():
+    data = request.get_json()
+
+    user_id = get_jwt_identity()
+    vending_id = data.get('vending_id')
+    snack_id = data.get('snack_id')
+    timestamp = data.get('timestamp', datetime().isoformat())
+
+    if not vending_id:
+        return jsonify({"message": "vending_id is required"}), 400
+    
+    search_entry = {
+        "user_id": user_id,
+        "vending_id": vending_id,
+        "snack_id": snack_id,
+        "timestamp": timestamp
+    }
+    search_history_collection.insert_one(search_entry)
+    return jsonify({"message": "Search history saved successfully"}), 201
+
+@app.route('/search-history', methods=['GET'])
+@jwt_required()
+def get_search_history():
+    user_id = get_jwt_identity()
+
+    search_history = list(search_history_collection.find({"user_id": user_id}))
+
+    for entry in search_history:
+        entry['_id'] = str(entry['_id'])
+    return jsonify(search_history)
+
+@app.route('/add_to_favorites', methods=['POST'])
+@jwt_required()
+def add_to_favorites():
+    # Extract data from the request
+    data = request.get_json()
+    lat = data.get('lat')
+    lng = data.get('lng')
+    building_name = data.get('building_name')
+    user_id = get_jwt_identity()
+    
+    favorite = {
+        'user_id': user_id,
+        'lat': lat,
+        'lng': lng,
+        'building_name': building_name
+    }
+
+    favorites_collection.insert_one(favorite)
+    return jsonify({'message': 'Machine location added to favorites!'})
+
+@app.route('/get_favorites', methods=['GET'])
+@jwt_required()
+def get_favorites():
+    user_id = get_jwt_identity()
+    favorites = list(favorites_collection.find({"user_id": user_id}))
+
+    for favorite in favorites:
+        favorite['_id'] = str(favorite['_id']) 
+    return jsonify(favorites)
+
+@app.route('/delete_favorite/<favorite_id>', methods=['DELETE'])
+@jwt_required()
+def delete_favorite(favorite_id):
+    user_id = get_jwt_identity()
+
+    favorite = favorites_collection.find_one({"_id": ObjectId(favorite_id), "user_id": user_id})
+    
+    if not favorite:
+        return jsonify({"message": "Favorite not found or you're not authorized to delete it"}), 404
+    
+    favorites_collection.delete_one({"_id": ObjectId(favorite_id), "user_id": user_id})
+    return jsonify({"message": "Favorite deleted successfully!"}), 200
+
 @app.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():

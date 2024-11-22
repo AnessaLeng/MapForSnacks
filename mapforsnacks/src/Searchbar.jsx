@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { mockData } from './mock_data';
+import axios from 'axios';
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');

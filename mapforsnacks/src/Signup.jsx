@@ -1,40 +1,88 @@
 import React, { useState } from 'react';
-//import { useAuth } from './Authentication';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { useAuth } from './Authentication';
 import { useNavigate } from 'react-router-dom';
+import FlashMessage from './FlashMessage';
 import axios from 'axios';
 import './Signup.css';
 import './App.css';
 
 function Signup() {
+    const { login } = useAuth();
     const [first_name, setFirstName] = useState('');
     const [last_name, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+    const [token, setToken] = useState('');
+    const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
+
     const navigate = useNavigate();
+
+    const setMessage = (message, type) => {
+        sessionStorage.setItem('flashMessage', JSON.stringify({ message, type }));
+    };
     
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         try {
             const res = await axios.post('http://localhost:5000/signup', { first_name, last_name, email, password });
-            console.log(res.data);
-            setMessage(res.data.msg);
+            // console.log(res.data);
+
+            setMessage('Signup successful! Please login.', 'success');
             navigate('/login');
         } catch (error) {
-            console.error('Error during signup:', error);
+            // console.error('Error during signup:', error);
             // Handle error and display appropriate message
             if (error.response) {
                 // The request was made, but the server responded with an error code
-                setMessage(error.response.data.msg || 'Something went wrong!');
+                if (error.response.data.msg.includes('Email already exists')) {
+                    setFlashMessage({message: 'This email is already registered. Please use a different one.', type: 'error'});
+                } else if (error.response.data.msg.includes('Password is too weak.')) {
+                    setFlashMessage({message: 'Your password is too weak. Please use a stronger password.', type: 'error'});
+                } else {
+                    setFlashMessage({message: error.response.data.msg || 'Something went wrong!', type: 'error'});
+                }
             } else if (error.request) {
                 // The request was made, but no response was received
-                setMessage('No response from server. Please try again later.');
+                setFlashMessage({message: 'No response from server. Please try again later.', type: 'error'});
             } else {
                 // Something else went wrong
-                setMessage('An unexpected error occurred.');
+                setFlashMessage({message: 'An unexpected error occurred.', type: 'error'});
             }
         }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        const token = credentialResponse.credential;
+        // console.log("Google Login Success! ID Token: ", token); // debugging
+
+        try {
+            const response = await axios.post('http://localhost:5000/api/auth/google-login', {
+                idToken: token,
+            });
+
+            // console.log('Google Login successful:', response.data); // debugging
+
+            const accessToken = response.data.access_token;
+            const userData = response.data.user;
+
+            setToken(accessToken); // Store Google access token in state or localStorage
+            localStorage.setItem('authToken', accessToken);
+            login(userData, accessToken);
+
+            setMessage('Google login successful!', 'success');
+            // Redirect to profile after Google login
+            navigate('/profile');
+        } catch (error) {
+            console.error('Google login error:', error);
+            setFlashMessage({message: 'Google authentication failed.', type: 'error'});
+        }
+    };
+
+    const handleGoogleFailure = (error) => {
+        console.error("Google login failed: ", error);
+        setFlashMessage({message: "Google login failed.", type: "error"});
     };
 
     return (
@@ -42,6 +90,20 @@ function Signup() {
             <section className="hero">
                 <h1>Create an Account</h1>
             </section>
+            <FlashMessage />
+            {flashMessage.message && (
+                <div style={{
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    marginBottom: '10px',
+                    backgroundColor: flashMessage.type === 'success' ? 'green' : 'red',
+                }}>
+                    <p>{flashMessage.message}</p>
+                </div>
+            )}
             <div className="signup-form">
             <form onSubmit={handleSubmit} method="POST">
                 <div>
@@ -54,11 +116,19 @@ function Signup() {
                     <input type="text" className="form-input" name="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
                 </div><br/>
                 <div>
-                    <input type="password" className="form-input" name="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                    <input type="password" className="form-input" name="password" placeholder="Password" minLength="10" value={password} onChange={(e) => setPassword(e.target.value)} required/>
                 </div><br/>
                 <button type="submit">Submit</button>
             </form>  
-            {message && <p>{message}</p>}
+            {token && <p>Your token: {token}</p>}
+            <GoogleOAuthProvider clientId='988046540404-rvnhbcvmi6ksqda0vgnj5gv0g8goebs2.apps.googleusercontent.com'>
+                    <div className="google-login">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onFailure={handleGoogleFailure}
+                        />
+                    </div>
+                </GoogleOAuthProvider>
             </div>
         </div>
     );
