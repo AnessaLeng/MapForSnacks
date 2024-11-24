@@ -52,24 +52,38 @@ function Profile() {
         }, [googleId, user]); 
 
     useEffect(() => {
+        const fetchUserData = async () => {
+            const token = localStorage.getItem('authToken');
+          
+            try {
+              const response = await axios.get('http://localhost:5000/api/user/data', {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              
+              const { searchHistory, favorites } = response.data;
+              setSearchHistory(searchHistory);
+              setFavorites(favorites);
+            } catch (error) {
+              console.error('Error fetching user data:', error);
+            }
+          };
+
         const fetchFavorites = async () => {
             const token = localStorage.getItem('authToken');
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
 
             try {
-                const response = await fetch('http://localhost:3000/api/favorites', {
+                const response = await axios.get('http://localhost:5000/favorites', {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    setFavorites(data);
-                } else {
-                    throw new Error('Error fetching favorites');
-                }
-            }
-            catch (error) {
-                console.error('500 Error: Unable to fetch favorites: ', error);
+                setFavorites(response.data);  // Update state with fetched favorites
+            } catch (error) {
+                console.error('Error fetching favorites: ', error);
             }
         };
 
@@ -77,31 +91,32 @@ function Profile() {
             const token = localStorage.getItem('authToken');
 
             try {
-                const response = await fetch('http://localhost:3000/api/search-history', {
+                const response = await axios.get('http://127.0.0.1:5000/search_history', {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
                     }
                 });
-
-                if (!response.ok) {
-                    throw new Error(`Error fetching search history: ${response.statusText}`);
-                }
-                const data = await response.json();
-                setSearchHistory(data);
+                setSearchHistory(response.data);
             } catch (error) {
-                console.error('Error fetching search history: ', error);
+                console.error('Error fetching search history:', error);
                 //setFlashMessage({message: "Failed to load search history.", type: "error"});
             }
         };
 
-        fetchFavorites(); // Fetch favorites if authenticated
-        fetchSearchHistory(); // Fetch search history if authenticated
-
+        if (isAuthenticated) {
+            fetchFavorites(); // Fetch favorites if authenticated
+            fetchSearchHistory(); // Fetch search history if authenticated
+        }
     }, [isAuthenticated, googleId]);
 
     const handleDeleteFavorite = async (favoriteId) => {
+        const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.delete(`http://localhost:3000/api/favorites/${favoriteId}`);
+            const response = await axios.delete(`http://localhost:5000/favorites/${favoriteId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Add the token in the header
+                }
+            });
 
             if (response.status === 200) {
                 setFavorites(prevFavorites => prevFavorites.filter(fav => fav.id !== favoriteId));
@@ -159,30 +174,30 @@ function Profile() {
                         <thead>
                             <tr>
                                 <th>Building</th>
-                                <th>Location</th>
-                                <th>Timestamp</th>
-                                <th>Delete</th>
+                                <th>Floor</th>
+                                <th colSpan="2">Offering</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {favorites.length > 0 ? (
-                                favorites.map((entry, index) => (
-                                    <tr key={index}>
-                                        <td>{entry.building_name}</td>
-                                        <td>Latitude: {entry.lat}, Longitude: {entry.lng}</td>
-                                        <td>{new Date(entry.timestamp).toLocaleString()}</td>
-                                        <td>
-                                            <button 
-                                                onClick={() => handleDeleteFavorite(entry.id)} 
-                                                className="delete-button">
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr><td colSpan="4">No favorites available.</td></tr>
-                            )}
+                        {favorites.length > 0 ? (
+                            favorites.map((entry) => (
+                            <tr key={entry._id}>
+                                <td>{entry.building_name}</td>
+                                <td>{entry.floor}</td>
+                                <td>{entry.Offering}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleDeleteFavorite(entry._id)}
+                                        className="delete-button"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                        ) : (  
+                            <tr><td colSpan="4">No favorites added.</td></tr>
+                        )}
                         </tbody>
                     </table>
                 </div>
@@ -193,23 +208,23 @@ function Profile() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Vending Machine</th>
-                                <th>Snack</th>
                                 <th>Timestamp</th>
+                                <th>Directions</th>
+                                <th>Filtered Search</th>
                             </tr>
                         </thead>
                         <tbody>
                             {searchHistory.length > 0 ? (
                                 searchHistory.map((entry, index) => (
                                     <tr key={index}>
-                                        <td>{entry.vending_id}</td>
-                                        <td>{entry.snack_id}</td>
-                                        <td>{new Date(entry.timestamp).toLocaleString()}</td>
+                                        <td>{entry.timestamp.toLocaleString()}</td>
+                                        <td>{`${entry.from_location} → ${entry.to_location}`}</td>
+                                        <td>{entry.filtered_search || 'N/A'}</td>
                                     </tr>
                                 ))
-                            ) : (
+                            ) : (  
                                 <tr><td colSpan="3">No search history available.</td></tr>
-                            )}
+                            )}  
                         </tbody>
                     </table>
                 </div>

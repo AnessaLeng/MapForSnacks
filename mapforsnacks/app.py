@@ -25,7 +25,12 @@ snacks_collection = db["snacks"]
 machine_collection = db["machine"]
 users_collection = db["users"]
 search_history_collection = db["history"]
-favorites_collection = db["favorites"]
+
+try:
+    client.server_info()  # This will throw an error if the server is unreachable
+    print("Connected to MongoDB successfully!")
+except Exception as e:
+    print("Failed to connect to MongoDB:", e)
 
 # Building data endpoint
 @app.route('/api/buildings', methods=['GET'])
@@ -152,81 +157,113 @@ def get_profile():
             return jsonify(user_data), 200
         except Exception as e:
             return jsonify({"msg": "User not found"}), 404
+        
+@app.route('/api/user/data', methods=['GET'])
+@jwt_required()
+def get_user_data(current_user):
+    return jsonify({
+        'searchHistory': current_user['search_history'],
+        'favorites': current_user['favorites']
+    })
 
-@app.route('/search-history', methods=['POST'])
+@app.route('/search_history', methods=['POST'])
 @jwt_required()
 def log_search_history():
+    current_user_email = get_jwt_identity()
     data = request.get_json()
 
-    user_id = get_jwt_identity()
-    vending_id = data.get('vending_id')
-    snack_id = data.get('snack_id')
-    timestamp = data.get('timestamp', datetime().isoformat())
+    user = db.users.find_one({'email': current_user_email})
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
 
-    if not vending_id:
-        return jsonify({"message": "vending_id is required"}), 400
-    
-    search_entry = {
-        "user_id": user_id,
-        "vending_id": vending_id,
-        "snack_id": snack_id,
-        "timestamp": timestamp
+    timestamp = datetime.now()
+
+    history_entry = {
+        'user_id': user['_id'],
+        'vending_id': data.get('vending_id'),
+        'snack_id': data.get('snack_id'),
+        'building_name': data.get('building_name'),
+        'from': data.get('from'),
+        'to': data.get('to'),
+        'timestamp': timestamp,
     }
-    search_history_collection.insert_one(search_entry)
-    return jsonify({"message": "Search history saved successfully"}), 201
 
-@app.route('/search-history', methods=['GET'])
+    db.history.insert_one(history_entry)
+    return jsonify({'message': 'Search history saved!'}), 200
+
+@app.route('/search_history', methods=['GET'])
 @jwt_required()
 def get_search_history():
-    user_id = get_jwt_identity()
+    current_user_email = get_jwt_identity()
 
-    search_history = list(search_history_collection.find({"user_id": user_id}))
+    user = db.users.find_one({'email': current_user_email})
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
+
+    search_history = list(search_history_collection.find({"user_id": user['_id']}))
+
+    if not search_history:
+        return jsonify({'msg': 'No history found'}), 404
 
     for entry in search_history:
         entry['_id'] = str(entry['_id'])
+        entry['from_location'] = entry.get('from', 'N/A')
+        entry['to_location'] = entry.get('to', 'N/A')
+        entry['filtered_search'] = entry.get('building_name', 'N/A')
     return jsonify(search_history)
 
-@app.route('/add_to_favorites', methods=['POST'])
+@app.route('/api/user/favorites', methods=['POST'])
 @jwt_required()
-def add_to_favorites():
+def add_favorite():
     # Extract data from the request
+    current_user_email = get_jwt_identity()
     data = request.get_json()
-    lat = data.get('lat')
-    lng = data.get('lng')
-    building_name = data.get('building_name')
-    user_id = get_jwt_identity()
+    machine = data.get('machine')
+
+    if not machine:
+        return jsonify({'msg': 'No machine data provided'}), 400
     
-    favorite = {
-        'user_id': user_id,
-        'lat': lat,
-        'lng': lng,
-        'building_name': building_name
-    }
+    user = db.users.find_one({'email': current_user_email})
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
 
-    favorites_collection.insert_one(favorite)
-    return jsonify({'message': 'Machine location added to favorites!'})
+    if 'favorites' not in user:
+        user['favorites'] = []
+    
+    if machine not in user.get('favorites', []):
+        # Add the machine to the favorites list
+        user['favorites'].append(machine)
 
-@app.route('/get_favorites', methods=['GET'])
+        db.users.update_one({'_id': user['_id']}, {'$set': {'favorites': user['favorites']}})
+        return jsonify({'msg': 'Machine added to favorites', 'favorites': user['favorites']}), 200
+    else:
+        return jsonify({'msg': 'Machine is already in favorites', 'favorites': user['favorites']}), 400
+
+@app.route('/favorites', methods=['GET'])
 @jwt_required()
 def get_favorites():
-    user_id = get_jwt_identity()
-    favorites = list(favorites_collection.find({"user_id": user_id}))
+    current_user_email = get_jwt_identity()
 
-    for favorite in favorites:
-        favorite['_id'] = str(favorite['_id']) 
-    return jsonify(favorites)
+    user = db.users.find_one({'email': current_user_email})
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
+    
+    # Return the 'favorites' array from the user document
+    return jsonify(user.get('favorites', []))
 
-@app.route('/delete_favorite/<favorite_id>', methods=['DELETE'])
+@app.route('/favorites/<favorite_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorite(favorite_id):
-    user_id = get_jwt_identity()
+    current_user_email = get_jwt_identity()
 
-    favorite = favorites_collection.find_one({"_id": ObjectId(favorite_id), "user_id": user_id})
+    user = db.users.find_one({'email': current_user_email})
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
     
-    if not favorite:
-        return jsonify({"message": "Favorite not found or you're not authorized to delete it"}), 404
-    
-    favorites_collection.delete_one({"_id": ObjectId(favorite_id), "user_id": user_id})
+    db.users.update_one(
+        {'email': current_user_email},
+        {"$pull": {"favorites": {"_id": ObjectId(favorite_id)}}}
+    )
     return jsonify({"message": "Favorite deleted successfully!"}), 200
 
 @app.route('/logout', methods=['POST'])
