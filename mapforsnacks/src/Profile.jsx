@@ -54,62 +54,95 @@ function Profile() {
     useEffect(() => {
         const fetchFavorites = async () => {
             const token = localStorage.getItem('authToken');
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
 
             try {
-                const response = await fetch('http://localhost:3000/api/favorites', {
+                const response = await axios.get('http://localhost:5000/favorites', {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    setFavorites(data);
-                } else {
-                    throw new Error('Error fetching favorites');
-                }
-            }
-            catch (error) {
-                console.error('500 Error: Unable to fetch favorites: ', error);
+                setFavorites(response.data);  // Update state with fetched favorites
+            } catch (error) {
+                console.error('Error fetching favorites: ', error);
             }
         };
 
         const fetchSearchHistory = async () => {
             const token = localStorage.getItem('authToken');
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
 
             try {
-                const response = await fetch('http://localhost:3000/api/search-history', {
+                const response = await axios.get('http://127.0.0.1:5000/api/search_history', {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
                     }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error fetching search history: ${response.statusText}`);
-                }
-                const data = await response.json();
-                setSearchHistory(data);
+                }); 
+                setSearchHistory(response.data);
             } catch (error) {
-                console.error('Error fetching search history: ', error);
+                console.error('Error fetching search history:', error);
                 //setFlashMessage({message: "Failed to load search history.", type: "error"});
+                if (error.response) {
+                    console.error('Response error:', error.response);
+                } else if (error.request) {
+                    console.error('Request error:', error.request);
+                } else {
+                    console.error('General error:', error.message);
+                }
+        
             }
         };
 
-        fetchFavorites(); // Fetch favorites if authenticated
-        fetchSearchHistory(); // Fetch search history if authenticated
-
+        if (isAuthenticated) {
+            fetchFavorites(); // Fetch favorites if authenticated
+            fetchSearchHistory(); // Fetch search history if authenticated
+        }
     }, [isAuthenticated, googleId]);
 
-    const handleDeleteFavorite = async (favoriteId) => {
+    const handleDeleteFavorite = async (buildingName) => {
+        const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.delete(`http://localhost:3000/api/favorites/${favoriteId}`);
+            const response = await axios.delete(`http://localhost:5000/favorites`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,  // Add the token in the header
+                },
+                data: { building_name: buildingName}
+            });
 
             if (response.status === 200) {
-                setFavorites(prevFavorites => prevFavorites.filter(fav => fav.id !== favoriteId));
+                setFavorites(prevFavorites => prevFavorites.filter(fav => fav.building_name !== buildingName));
                 setFlashMessage({message: "Favorite removed successfully.", type: "success"});
             }
         } catch (error) {
             console.error('Error removing favorite:', error);
             setFlashMessage({message: "Failed to remove favorite. Please try again.", type: "error"});
+        }
+    };
+
+    const handleDeleteSearchHistory = async () => {
+        const token = localStorage.getItem('authToken');
+            if (window.confirm('Are you sure you want to delete your search history?')) {
+            try {
+                const response = await axios.delete(`http://localhost:5000/search_history`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,  // Add the token in the header
+                    }
+                });
+
+                if (response.status === 200) {
+                    setSearchHistory([]);
+                    setFlashMessage({message: "Search history removed successfully.", type: "success"});
+                }
+            } catch (error) {
+                console.error('Error removing search history:', error);
+                setFlashMessage({message: "Failed to remove history. Please try again.", type: "error"});
+            } 
         }
     };
 
@@ -126,13 +159,14 @@ function Profile() {
     }
 
     if (!profileData) {
-        return <div>Error loading profile or user not authorized.</div>;
+        return <div>Loading user profile...</div>;  // Display loading while waiting for profileData
     }
+
 
     return (
         <div className="profile-page">
             <section className="hero">
-            <h1>{profileData.first_name ? `${profileData.first_name} ${profileData.last_name}'s Profile` : "Profile"}</h1>
+            <h1>{`${profileData.first_name} ${profileData.last_name}'s Profile`}</h1>
             </section>
             <FlashMessage />
             {flashMessage.message && (
@@ -149,7 +183,7 @@ function Profile() {
                 </div>
             )}
             <section className="user-info">
-                <h3>Name: {profileData.first_name ? `${profileData.first_name} ${profileData.last_name}` : 'N/A'}</h3>
+                <h3>Name: {`${profileData.first_name} ${profileData.last_name}` || 'N/A'}</h3>
                 <h3>Email: {profileData.email || 'N/A'}</h3>
             </section>
             <section className="favorites">
@@ -159,30 +193,30 @@ function Profile() {
                         <thead>
                             <tr>
                                 <th>Building</th>
-                                <th>Location</th>
-                                <th>Timestamp</th>
-                                <th>Delete</th>
+                                <th>Floor</th>
+                                <th colSpan="2">Offering</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {favorites.length > 0 ? (
-                                favorites.map((entry, index) => (
-                                    <tr key={index}>
-                                        <td>{entry.building_name}</td>
-                                        <td>Latitude: {entry.lat}, Longitude: {entry.lng}</td>
-                                        <td>{new Date(entry.timestamp).toLocaleString()}</td>
-                                        <td>
-                                            <button 
-                                                onClick={() => handleDeleteFavorite(entry.id)} 
-                                                className="delete-button">
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr><td colSpan="4">No favorites available.</td></tr>
-                            )}
+                        {favorites.length > 0 ? (
+                            favorites.map((entry) => (
+                            <tr key={entry._id}>
+                                <td>{entry.building_name}</td>
+                                <td>{entry.floor}</td>
+                                <td>{entry.Offering}</td>
+                                <td>
+                                    <button
+                                        onClick={() => handleDeleteFavorite(entry.building_name)}
+                                        className="delete-button"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                        ) : (  
+                            <tr><td colSpan="4">No favorites added.</td></tr>
+                        )}
                         </tbody>
                     </table>
                 </div>
@@ -190,26 +224,32 @@ function Profile() {
             <section className="search-history">
                 <div>
                     <h3>Recent Search History</h3>
+                    <button onClick={handleDeleteSearchHistory} className="delete-button">
+                        Delete History
+                    </button>
                     <table>
                         <thead>
                             <tr>
-                                <th>Vending Machine</th>
-                                <th>Snack</th>
                                 <th>Timestamp</th>
+                                <th>Directions</th>
+                                <th>Filtered Search</th>
                             </tr>
                         </thead>
                         <tbody>
                             {searchHistory.length > 0 ? (
-                                searchHistory.map((entry, index) => (
+                                searchHistory.map((entry, index) => {
+                                    const formattedTimestamp = new Date(entry.timestamp).toLocaleString();
+                                    return (
                                     <tr key={index}>
-                                        <td>{entry.vending_id}</td>
-                                        <td>{entry.snack_id}</td>
-                                        <td>{new Date(entry.timestamp).toLocaleString()}</td>
+                                        <td>{formattedTimestamp}</td>
+                                        <td>{`${entry.from} → ${entry.to}`}</td>
+                                        <td>{entry.building_name || 'N/A'}</td>
                                     </tr>
-                                ))
-                            ) : (
+                                    );
+                                })
+                            ) : (  
                                 <tr><td colSpan="3">No search history available.</td></tr>
-                            )}
+                            )}  
                         </tbody>
                     </table>
                 </div>

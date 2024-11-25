@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import SearchBar from './Searchbar';
+import React, { useEffect, useState, useRef } from "react";
+import Select from "react-select";
 import axios from 'axios';
 import './MapPage.css';
-import { mockData } from './mock_data';
+import { fetchBuildings, fetchVendingMachines, fetchSnacks, saveSearchHistory, fetchSearchHistory } from "./api/api";
+
 
 // Importing images
 import helpIcon from './images/question.png';
@@ -10,221 +11,300 @@ import feedbackIcon from './images/feedback.png';
 
 const MapPage = () => {
     const [map, setMap] = useState(null);
-    const [infoWindow, setInfoWindow] = useState(null);
-    const [filteredMachines, setFilteredMachines] = useState(mockData);
-
-    const [selectedBuilding, setSelectedBuilding] = useState('');
-    const [selectedSnackType, setSelectedSnackType] = useState('');
-    const [selectedFoodType, setSelectedFoodType] = useState('');
-    const [favorites, setFavorites] = useState([]);
-    const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
-
+    const [buildings, setBuildings] = useState([]);
+    const [selectedBuildings, setSelectedBuildings] = useState([]);
+    const [mapData, setMapData] = useState([]);
+    const [directionsRenderer, setDirectionsRenderer] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar toggle state
+    const [markers, setMarkers] = useState([]);
+    const fromInputRef = useRef(null);
+    const toInputRef = useRef(null);
 
     useEffect(() => {
-        const loadGoogleMapsScript = () => {
-            if (!window.google) {
-                const script = document.createElement('script');
-                script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB2cgUyYlI3DBdzF_GA9WLi6uMoh75ONsY`;
-                script.async = true;
-                script.onload = () => initMap();
-                script.onerror = () => console.error("Failed to load Google Maps script");
-                document.head.appendChild(script);
-            } else {
-                initMap();
+        const loadData = async () => {
+            try {
+              const [buildings, vendingMachines, snacks] = await Promise.all([
+                fetchBuildings(),
+                fetchVendingMachines(),
+                fetchSnacks(),
+              ]);
+      
+              const combinedData = buildings.map((building) => ({
+                ...building,
+                lat: parseFloat(building.lat),
+                lng: parseFloat(building.lng),
+                vending_machines: vendingMachines
+                  .filter((vm) => vm.building_name === building.building_name)
+                  .map((machine) => ({
+                    ...machine,
+                    ...snacks.find((snack) => snack.snack_id === machine.snack_id),
+                  })),
+              }));
+      
+              setMapData(combinedData);
+              setBuildings(
+                buildings.map((building) => ({
+                  label: building.building_name,
+                  value: building.building_name,
+                }))
+              );
+            } catch (error) {
+              console.error("Error loading data:", error);
             }
+          };
+
+          loadData();
+
+          const loadSearchHistory = async () => {
+            try {
+              const history = await fetchSearchHistory();
+              saveSearchHistory(history);
+            } catch (error) {
+              console.error("Error fetching search history:", error);
+            }
+          };
+          
+          loadGoogleMapsScript();
+          //loadData();
+          loadSearchHistory();
+        }, []);
+      
+        useEffect(() => {
+          if (map && mapData.length > 0) {
+            clearMarkers();
+            addMarkers(map, mapData);
+            initAutocomplete();
+          }
+        }, [map, mapData]);
+      
+        const loadGoogleMapsScript = () => {
+          if (!document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB2cgUyYlI3DBdzF_GA9WLi6uMoh75ONsY&libraries=places`;
+            script.async = true;
+            script.onload = initMap;
+            document.head.appendChild(script);
+          } else if (window.google?.maps) {
+            initMap();
+          }
         };
-        loadGoogleMapsScript();
-    }, []);
-
-    const initMap = () => {
-        if (!map && window.google && window.google.maps) {
-            const mapOptions = {
-                center: { lat: 35.3075, lng: -80.7294 },
-                zoom: 15,
-            };
-            const mapInstance = new window.google.maps.Map(document.getElementById('map'), mapOptions);
-            setMap(mapInstance);
-            addMarkers(mapInstance, filteredMachines);
-        }
-    };
-
-    const addMarkers = (mapInstance, machines) => {
-        if (mapInstance) {
-            const infoWindowInstance = new window.google.maps.InfoWindow();
-            machines.forEach((machine) => {
-                const marker = new window.google.maps.Marker({
-                    position: { lat: machine.lat, lng: machine.lng },
-                    map: mapInstance,
-                    title: machine.location,
-                });
-
-                marker.addListener('click', () => {
-
-                const favoritesButton = `
-                    <button id="favorite-btn" style="margin-top: 10px; background-color: #256BDB; color: white; padding: 8px; border-radius: 5px; cursor: pointer;">
-                    Add to Favorites
-                    </button>
-                `;
-
-                    infoWindowInstance.setContent(`
-                        <div>
-                            <h2>${machine.location}</h2>
-                            <p>Items: ${machine.items.join(', ')}</p>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${machine.lat},${machine.lng}" 
-                               target="_blank" 
-                               rel="noopener noreferrer">Show in Google Maps</a>
-                               ${favoritesButton}
-                        </div>
-                    `);
-                    infoWindowInstance.open(mapInstance, marker);
-
-                    const favoriteBtn = document.getElementById("favorite-btn");
-                    if (favoriteBtn) {
-                        favoriteBtn.addEventListener("click", () => {
-                        handleAddFavorite(machine);  // Add favorite when the button is clicked
-                        });
-                    }
-                    });
+      
+        const initMap = () => {
+          if (!map) {
+            const mapInstance = new window.google.maps.Map(document.getElementById("map"), {
+              center: { lat: 35.3075, lng: -80.7294 },
+              zoom: 15,
             });
-            setInfoWindow(infoWindowInstance);
-        }
-    };
+            setMap(mapInstance);
+      
+            const directionsRendererInstance = new window.google.maps.DirectionsRenderer();
+            directionsRendererInstance.setMap(mapInstance);
+            setDirectionsRenderer(directionsRendererInstance);
+          }
+        };
+      
+        const initAutocomplete = () => {
+          if (window.google?.maps?.places) {
+            new window.google.maps.places.Autocomplete(fromInputRef.current).bindTo("bounds", map);
+            new window.google.maps.places.Autocomplete(toInputRef.current).bindTo("bounds", map);
+          }
+        };
 
-    const handleFilterChange = (query, filterType) => {
-        const lowerCaseQuery = query.toLowerCase();
-        const filtered = mockData.filter((machine) =>
-            machine.location.toLowerCase().includes(lowerCaseQuery) ||
-            machine.items.some((item) => item.toLowerCase().includes(lowerCaseQuery))
-        );
-        setFilteredMachines(filtered);
-        clearMarkers();
-        addMarkers(map, filtered);
+        const addMarkers = (mapInstance, data) => {
+            const infoWindow = new window.google.maps.InfoWindow();
+            const newMarkers = [];
+            data.forEach((building) => {
+              const marker = new window.google.maps.Marker({
+                position: { lat: building.lat, lng: building.lng },
+                map: mapInstance,
+                title: building.building_name,
+              });
+              newMarkers.push(marker);
+
+              const favoritesButton = `
+                <button id="favorite-btn" style="margin-top: 10px; background-color: #256BDB; color: white; padding: 8px; border-radius: 5px; cursor: pointer;">
+                Add to Favorites
+                </button>
+            `;
         
-        if (filterType === 'building') {
-            setSelectedBuilding(query);
-        } else if (filterType === 'snack') {
-            setSelectedSnackType(query);
-        } else if (filterType === 'food') {
-            setSelectedFoodType(query);
-        }
+              marker.addListener("click", () => {
+                const vendingInfo = building.vending_machines
+                  .map(
+                    (vm) =>
+                      `<strong>${vm.snack_name || "Unknown"}</strong> (${vm.category || "Unknown"}) - $${vm.price || "N/A"}<br>Status: ${vm.stock_status}`
+                  )
+                  .join("<br>");
+        
+                infoWindow.setContent(`
+                  <div>
+                    <h2>${building.building_name}</h2>
+                    <p>${vendingInfo}</p>
+                    ${favoritesButton}
+                  </div>
+                `);
+                infoWindow.open(mapInstance, marker);
+                const favoriteBtn = document.getElementById("favorite-btn");
+                if (favoriteBtn) {
+                    favoriteBtn.onclick = () => {
+                        console.log('Add to Favorites clicked!');
+                        handleAddFavorite(building); // Add favorite when the button is clicked
+                        infoWindow.close();
+                    };
+                }
+              });
+        
+              if (!mapInstance.markers) mapInstance.markers = [];
+              mapInstance.markers.push(marker);
+            });
+            setMarkers(newMarkers);
+          };
+        
+          const clearMarkers = () => {
+            if (map?.markers) {
+              map.markers.forEach((marker) => marker.setMap(null));
+              map.markers = [];
+            }
+          };
+        
+          const handleBuildingSelection = (selectedOptions) => {
+            setSelectedBuildings(selectedOptions || []);
+            const selectedNames = selectedOptions?.map((option) => option.value) || [];
+            const filteredData = selectedNames.length
+              ? mapData.filter((building) => selectedNames.includes(building.building_name))
+              : mapData;
+        
+            clearMarkers();
+            addMarkers(map, filteredData);
 
-        saveSearchHistory(query, filterType, filtered);
-    };
+            // Save the filter search to history
+            selectedNames.forEach(buildingName => {
+                const building = mapData.find(b => b.building_name === buildingName);
+                if (building) {
+                    building.vending_machines.forEach(vm => {
+                        handleSearchHistory({
+                            building_name: buildingName,
+                            from: fromInputRef.current.value,
+                            to: toInputRef.current.value,
+                        });
+                    });
+                }
+            });
+          };
+        
+          const handleDirections = () => {
+            if (directionsRenderer && fromInputRef.current.value && toInputRef.current.value) {
+              const directionsService = new window.google.maps.DirectionsService();
+              directionsService.route(
+                {
+                  origin: fromInputRef.current.value,
+                  destination: toInputRef.current.value,
+                  travelMode: window.google.maps.TravelMode.DRIVING,
+                },
+                (result, status) => {
+                  if (status === "OK") {
+                    directionsRenderer.setDirections(result);
 
-    const clearMarkers = () => {
-        if (map && map.markers) {
-            map.markers.forEach(marker => marker.setMap(null));
-            map.markers = [];
-        }
-    };
+                    // Save the directions search to history
+                    handleSearchHistory({
+                        from: fromInputRef.current.value,
+                        to: toInputRef.current.value,
+                    });
 
-    const handleAddFavorite = async (building) => {
+                  } else {
+                    console.error("Directions request failed:", status);
+                  }
+                }
+              );
+            }
+          };
+        
+        const toggleSidebar = () => {
+            setIsSidebarOpen(!isSidebarOpen);
+        };
+
+    const handleAddFavorite = async (machine) => {
         const token = localStorage.getItem('authToken');
         try {
-          // Make an API request to add the favorite
-          const response = await axios.post('http://localhost:3000/api/favorites', {
-            lat: building.lat,
-            lon: building.lng,
-            building_name: building.building_name,  // Send the building name as well
-          }, {
-            headers: {
-              Authorization: `Bearer ${token}`
+            const response = await axios.post('http://localhost:5000/api/user/favorites', 
+                    { machine },
+                    { headers: { Authorization: `Bearer ${token}` },  
+                        body: JSON.stringify({
+                            lat: machine.lat,
+                            lng: machine.lng,
+                            building_name: machine.location,
+                            vending_id: machine.vending_id,
+                            floor: machine.floor,
+                            offering: machine.Offering,
+                            image: machine.Image,
+                        }),
+            });
+            if (response.status === 200) {
+                console.log('Added to favorites!');
+            } else {
+                const errorData = await response.json();
+                console.error('Failed to add to favorites:', errorData.message);
             }
-          });
-      
-          if (response.status === 200) {
-            // Add the new favorite to the state directly
-            const newFavorite = response.data;  // Assuming the server returns the new favorite
-            setFavorites(prevFavorites => [newFavorite, ...prevFavorites]); // Prepend to the list
-            setFlashMessage({ message: "Favorite added successfully.", type: "success" });
-          }
         } catch (error) {
-          console.error('Error adding favorite:', error);
-          setFlashMessage({ message: "Failed to add favorite. Please try again.", type: "error" });
+            console.error('Error adding to favorites:', error);
         }
-      };
+    };
 
-    const saveSearchHistory = async (searchedTerm, filterType, filteredMachines) => {
-        let searchTerm = '';
-        const locations = filteredMachines.map(machine => machine.location);
-
-        if (filterType === 'building') {
-            searchTerm = `Building: ${searchedTerm}`;
-        } else if (filterType === 'snack') {
-            searchTerm = `Snack Type: ${searchedTerm}`;
-        } else if (filterType === 'food') {
-            searchTerm = `Food Type: ${searchedTerm}`;
-        }
-
-        const token = localStorage.getItem('token');
-
+    const handleSearchHistory = async (data) => {
+        const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.post(
-                'http://localhost:5000/search-history',
-                {
-                    searched_term: searchedTerm,
-                    locations: locations,
-                    timestamp: new Date().toISOString()
-                },
+            // Send the search query to the backend to save it in the database
+            const response = await axios.post('http://127.0.0.1:5000/search_history', 
+                data,
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            console.log('Search history saved:', response.data);
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+    
+            if (response.status === 200) {
+                console.log('Search history logged!');
+            } else {
+                const errorData = await response.json();
+                console.error('Failed to save search history:', errorData.message);
+            }
         } catch (error) {
-            console.error("Error saving search history:", error);
+            console.error('Error logging search history:', error);
         }
     };
 
     return (
-        <div className="map-page">
+        <>
+          <div className={`map-page ${isSidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
+            <div className="toggle-arrow" onClick={toggleSidebar}>
+              {isSidebarOpen ? "<" : ">"}
+            </div>
             <div className="sidebar">
-                <h2>Search By item or building...</h2>
-                <div className="search-section">
-                    <select onChange={(e) => handleFilterChange(e.target.value)}>
-                        <option value="">Building</option>
-                    </select>
-                    <select onChange={(e) => handleFilterChange(e.target.value)}>
-                        <option value="">Snack Type</option>
-                    </select>
-                    <select onChange={(e) => handleFilterChange(e.target.value)}>
-                        <option value="">Food Type</option>
-                    </select>
-                </div>
-
-                <div className="directions">
-                    <div className="icon-container">
-                        <i className="fas fa-car"></i>
-                        <i className="fas fa-bicycle"></i>
-                        <i className="fas fa-walking"></i>
-                    </div>
-                    <h3>Directions</h3>
-                    <input type="text" placeholder="From" className="button" />
-                    <input type="text" placeholder="To" className="button" />
-                    <button className="button">Go!</button>
-                </div>
-
-                <div className="help-feedback">
-                    <div className="help-item">
-                        <img src={helpIcon} alt="Help Icon" className="icon" />
-                        <span>Help</span>
-                    </div>
-                    <div className="help-item">
-                        <img src={feedbackIcon} alt="Feedback Icon" className="icon" />
-                        <span>Feedback</span>
-                    </div>
-                </div>
+              {isSidebarOpen && (
+                <>
+                  <h2>Filter by Location or Snack</h2>
+                  <Select
+                    options={buildings}
+                    isMulti
+                    closeMenuOnSelect={false}
+                    onChange={handleBuildingSelection}
+                    value={selectedBuildings}
+                    placeholder="Select Buildings"
+                  />
+                  <div className="directions-box">
+                    <h3>Get Directions</h3>
+                    <input ref={fromInputRef} type="text" placeholder="From" />
+                    <input ref={toInputRef} type="text" placeholder="To" />
+                    <button onClick={handleDirections}>Go</button>
+                  </div>
+                </>
+              )}
             </div>
             <div className="map-container">
-                <section className="hero">
-                    <h1>Vending Machines Map</h1>
-                </section>
-                <div id="map"></div>
+              <div id="map"></div>
             </div>
-        </div>
-    );
-};
-
-export default MapPage;
+          </div>
+        </>
+      );
+    };
+    
+    export default MapPage;
