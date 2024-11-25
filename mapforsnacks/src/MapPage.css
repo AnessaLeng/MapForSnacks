@@ -1,70 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;600;700&display=swap');
+
 /* General Layout */
 .map-page {
     display: flex;
     height: 100vh;
-    font-family: 'Inknut Antiqua', sans-serif;
+    font-family: 'Inria Serif', serif;
     transition: all 0.3s ease; /* Smooth transition for sidebar */
-    position: relative; /* For absolute positioning of toggle arrow */
-    background-color: #F2F2F2; /* Replace with your desired background color */
-    height: calc(100vh - 60px);
-  }
-
-/* Navigation Bar */
-.navbar {
-    display: flex;
-    justify-content: center; /* Center the links horizontally */
-    align-items: center; /* Vertically align the links */
-    padding: 10px 0; /* Add some vertical padding */
+    position: relative;
   }
   
-  .navbar .nav-links {
-    display: flex;
-    gap: 20px; /* Space between the links */
-  }
-  
-  .navbar .nav-link {
-    color: #F23D3D;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-  }
-  
-  .navbar .nav-link:hover {
-    text-decoration: underline; /* Underline on hover */
+  .sidebar-collapsed .sidebar {
+    width: 60px; /* Show only the icons when collapsed */
+    padding: 10px 5px;
+    overflow: hidden;
   }
   
   /* Sidebar Styles */
   .sidebar {
     width: 300px;
     background: #f5f5f5;
-    border-right: 2px solid #d2d1ca;
-    padding: 10px;
+    border-right: 1px solid #ddd;
+    padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease; /* Smooth collapse/expand transition */
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    justify-content: space-between; /* Push important links to the bottom */
+    transition: all 0.3s ease;
     overflow-y: auto;
+  }
+
+  .sidebar h2 {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+  }
+  
+  .sidebar h2 img {
+    width: 30px; /* Same size as text */
+    height: 30px; /* Maintain aspect ratio */
+  }
+  
+  /* Collapsed Sidebar Icons */
+  .sidebar-collapsed .sidebar h2 {
+    display: none; /* Hide the full title in collapsed state */
+  }
+  
+  .sidebar .icon-only {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .sidebar-collapsed .icon-only {
+    display: flex; /* Show icons in collapsed state */
+  }
+  
+  .sidebar .icon-only img {
+    width: 30px; /* Larger size for collapsed state */
+    height: 30px;
+    cursor: pointer;
   }
   
   .sidebar-collapsed .sidebar {
-    width: 0; /* Fully collapse the sidebar */
-    padding: 0; /* Remove padding */
-    border: none; /* Remove border when collapsed */
-    overflow: hidden; /* Hide overflowing content */
+    width: 60px; /* Show only the icons when collapsed */
+    padding: 10px 5px;
+    overflow: hidden;
+  }
+
+/* Important Links Section */
+.important-links {
+  margin-top: auto; /* Ensure it stays at the bottom */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between links */
+}
+
+.important-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text */
+  text-decoration: none;
+  color: #333;
+  font-size: 0.85rem; /* Slightly smaller font size */
+  font-weight: bold;
+}
+
+.important-links a img {
+  width: 16px;
+  height: 16px;
+}
+
+.important-links a:hover {
+  color: #007bff; /* Blue text on hover */
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Separator Line */
+.separator {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0; /* Space around the line */
+}
+  
+  /* Collapsed Sidebar Important Links */
+  .sidebar-collapsed .important-links a {
+    justify-content: center;
   }
   
-  /* Sidebar Header */
-  .sidebar h2 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: #a23838;
-  }
+  .sidebar-collapsed .important-links a span {
+    display: none; /* Hide text when collapsed */
+  }  
   
   /* Toggle Arrow */
   .toggle-arrow {
     position: absolute;
-    top: 50%; /* Place at the top of the page */
-    left: 18%; /* Adjust placement for open sidebar */
+    top: 20px;
+    left: 325px;
     background: #007bff;
-    color: #F5F5F5;
+    color: white;
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -76,11 +135,11 @@
     font-size: 14px;
     font-weight: bold;
     transition: all 0.3s ease;
-    z-index: 1000; /* Ensure it's above other elements */
+    z-index: 1000;
   }
   
   .sidebar-collapsed .toggle-arrow {
-    left: 10px; /* Position arrow flush with the edge of the collapsed sidebar */
+    left: 55px; /* Adjust for collapsed sidebar */
   }
   
   .toggle-arrow:hover {
@@ -88,19 +147,23 @@
   }
   
   /* Directions Box */
-  .directions-box {
-    margin-top: 20px;
-    padding: 15px;
-    background: #7dcfff;
-    border: 1px solid #94d7fe;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  .directions-box input {
+    font-family: 'Inria Serif', serif; /* Change to Inria Serif */
+    font-size: 0.9rem; /* Adjust size if needed */
+    color: #333; /* Regular text color */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .directions-box input::placeholder {
+    font-family: 'Inria Serif', serif; /* Change placeholder font */
+    font-style: italic; /* Optional: Add an italic style */
+    color: #aaa; /* Light gray for placeholder */
   }
   
   .directions-box h3 {
-    font-size: 1.5rem;
     margin-bottom: 10px;
-    color: #0056b3;
   }
   
   .directions-box input {
@@ -114,8 +177,8 @@
   .directions-box button {
     width: 100%;
     padding: 10px;
-    background: #ffffff;
-    color:#3db0f2;
+    background: #3792f3;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -123,7 +186,7 @@
   }
   
   .directions-box button:hover {
-    background: #d6eaff;
+    background: #4d99eb;
   }
   
   /* Map Container */
@@ -138,8 +201,33 @@
   #map {
     width: 100%;
     height: 100%;
-    border-radius: 8px;
   }
+  
+  /* Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+  }
+  
+  .navbar .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .navbar .nav-link {
+    color: #007bff; /* Blue text for links */
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 1rem;
+    font-family: 'Inknut Antiqua', serif;
+  }
+  
+  .navbar .nav-link:hover {
+    text-decoration: underline;
+  }
+  
   
   /* Responsive Design */
   @media (max-width: 768px) {
@@ -155,7 +243,7 @@
     }
   
     .sidebar-collapsed .sidebar {
-      width: 0;
+      width: 60px;
       padding: 0;
       border: none;
     }
@@ -168,4 +256,4 @@
     .map-container {
       height: calc(100vh - 300px);
     }
-  }
+}

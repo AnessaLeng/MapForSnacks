@@ -3,13 +3,14 @@ import Select from "react-select";
 import "./MapPage.css";
 import { fetchBuildings, fetchVendingMachines, fetchSnacks } from "./api/api";
 
+
 const MapPage = () => {
   const [map, setMap] = useState(null);
   const [buildings, setBuildings] = useState([]);
   const [selectedBuildings, setSelectedBuildings] = useState([]);
   const [mapData, setMapData] = useState([]);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar toggle state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const fromInputRef = useRef(null);
   const toInputRef = useRef(null);
@@ -175,13 +176,39 @@ const MapPage = () => {
         </div>
       </nav>
       <div className={`map-page ${isSidebarOpen ? "sidebar-open" : "sidebar-collapsed"}`}>
+        {/* Toggle Arrow */}
         <div className="toggle-arrow" onClick={toggleSidebar}>
           {isSidebarOpen ? "<" : ">"}
         </div>
+  
+        {/* Sidebar */}
         <div className="sidebar">
-          {isSidebarOpen && (
+          {!isSidebarOpen ? (
+            // Collapsed Sidebar with Icons Only
+            <div className="icon-only">
+              <div>
+                <img src="/images/building.png" alt="Building Icon" title="Filter by Building" />
+              </div>
+              <div>
+                <img src="/images/direction.png" alt="Directions Icon" title="Directions" />
+              </div>
+              <div>
+                <img src="/images/profile.png" alt="Profile Icon" title="Profile" />
+              </div>
+              <div>
+                <img src="/images/favorite.png" alt="Favorites Icon" title="Favorites" />
+              </div>
+              <div>
+                <img src="/images/logout.png" alt="Log Out Icon" title="Log Out" />
+              </div>
+            </div>
+          ) : (
+            // Expanded Sidebar with Full Content
             <>
-              <h2>Filter by Location or Snack</h2>
+              <h2>
+                <img src="/images/building.png" alt="Building Icon" />
+                Filter Snack Location
+              </h2>
               <Select
                 options={buildings}
                 isMulti
@@ -190,21 +217,46 @@ const MapPage = () => {
                 value={selectedBuildings}
                 placeholder="Select Buildings"
               />
+              <h2>
+                <img src="/images/direction.png" alt="Directions Icon" />
+                Directions
+              </h2>
               <div className="directions-box">
-                <h3>Get Directions</h3>
                 <input ref={fromInputRef} type="text" placeholder="From" />
                 <input ref={toInputRef} type="text" placeholder="To" />
                 <button onClick={handleDirections}>Go</button>
               </div>
+  
+              {/* Important Links */}
+              <div className="important-links">
+                <hr className="separator" />
+                <a href="/profile">
+                  <img src="/images/profile.png" alt="Profile Icon" />
+                  Profile
+                </a>
+                <a href="/favorites">
+                  <img src="/images/favorite.png" alt="Favorites Icon" />
+                  Favorites
+                </a>
+                <a href="/logout">
+                  <img src="/images/logout.png" alt="Log Out Icon" />
+                  Log Out
+                </a>
+              </div>
             </>
           )}
         </div>
+        {/* Map Container */}
         <div className="map-container">
           <div id="map"></div>
         </div>
+        <div className="snackID">
+            
+        </div>
       </div>
     </>
-  );
+  );  
+   
 };
 
 export default MapPage;
