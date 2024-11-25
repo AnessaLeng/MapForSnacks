@@ -1,10 +1,11 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './Authentication';
 import MainPage from './MainPage';
 import MapPage from './MapPage';
 import Profile from './Profile';
+import Favorites from './Favorites';
 import Signup from './Signup';
 import Login from './Login';
 import './App.css';
@@ -43,6 +44,7 @@ function App() {
           <Route path="/" element={<MainPage />} /> {/* MainPage on the root path */}
           <Route path="/map" element={<MapPage />} /> {/* Map page */}
           <Route path="/profile" element={<Profile />} /> {/* Profile page */}
+          <Route path="/favorites" element={<Favorites />} /> {/* Favorites page */}
           <Route path="/signup" element={<Signup />} /> {/* Signup page */}
           <Route path="/login" element={<Login />} /> {/* Login page */}
         </Routes>

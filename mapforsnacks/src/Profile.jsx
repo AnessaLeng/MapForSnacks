@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './Authentication';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import FlashMessage from './FlashMessage';
 import './Profile.css';
 import './App.css';
@@ -105,6 +105,9 @@ function Profile() {
         }
     }, [isAuthenticated, googleId]);
 
+    const directionsData = searchHistory.filter(entry => !entry.floor && !entry.Offering && !entry.building_name);
+    const buildingData = searchHistory.filter(entry => !entry.to && !entry.from);
+
     const handleDeleteFavorite = async (buildingName) => {
         const token = localStorage.getItem('authToken');
         try {
@@ -148,15 +151,8 @@ function Profile() {
 
     const handleLogout = () => {
         logout();
-        navigate('/login');  // Redirect to login page after logout
+        navigate("/login");  // Redirect to login page after logout
     };
-
-
-    // If the user is not authenticated, redirect to the login page
-    if (!isAuthenticated && !googleId) {
-        setMessage("You must log in first.", "error");
-        return <Navigate to="/login" />;
-    }
 
     if (!profileData) {
         return <div>Loading user profile...</div>;  // Display loading while waiting for profileData
@@ -188,7 +184,7 @@ function Profile() {
             </section>
             <section className="favorites">
                 <div>
-                    <h3>Favorites</h3>
+                    <Link to="/favorites"><h3>Favorites</h3></Link>
                     <table>
                         <thead>
                             <tr>
@@ -223,7 +219,7 @@ function Profile() {
             </section>
             <section className="search-history">
                 <div>
-                    <h3>Recent Search History</h3>
+                    <h3>Recent Search: Directions</h3>
                     <button onClick={handleDeleteSearchHistory} className="delete-button">
                         Delete History
                     </button>
@@ -232,23 +228,52 @@ function Profile() {
                             <tr>
                                 <th>Timestamp</th>
                                 <th>Directions</th>
-                                <th>Filtered Search</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {searchHistory.length > 0 ? (
-                                searchHistory.map((entry, index) => {
+                            {directionsData.length > 0 ? (
+                                directionsData.map((entry, index) => {
                                     const formattedTimestamp = new Date(entry.timestamp).toLocaleString();
                                     return (
                                     <tr key={index}>
                                         <td>{formattedTimestamp}</td>
                                         <td>{`${entry.from} → ${entry.to}`}</td>
+                                    </tr>
+                                    );
+                                })
+                            ) : (  
+                                <tr><td colSpan="2">No search history available.</td></tr>
+                            )}  
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section className="search-history">
+                <div>
+                    <h3>Recent Search: Buildings</h3>
+                    <button onClick={handleDeleteSearchHistory} className="delete-button">
+                        Delete History
+                    </button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Filtered Search</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {buildingData.length > 0 ? (
+                                buildingData.map((entry, index) => {
+                                    const formattedTimestamp = new Date(entry.timestamp).toLocaleString();
+                                    return (
+                                    <tr key={index}>
+                                        <td>{formattedTimestamp}</td>
                                         <td>{entry.building_name || 'N/A'}</td>
                                     </tr>
                                     );
                                 })
                             ) : (  
-                                <tr><td colSpan="3">No search history available.</td></tr>
+                                <tr><td colSpan="2">No search history available.</td></tr>
                             )}  
                         </tbody>
                     </table>

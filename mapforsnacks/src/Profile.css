@@ -60,7 +60,7 @@
     margin-bottom: 20px;
 }
 
-/* Search History Section */
+/* Search History & Favorites Section */
 .search-history, .favorites {
     margin-top: 40px;
     padding: 20px;
@@ -81,7 +81,6 @@
 }
 
 /* Table Styling */
-/* Table Styling with Gradient Header */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -94,7 +93,7 @@ th, td {
 }
 
 th {
-    background: #e3b342; /* Gradient for table header */
+    background: #e3b342;
     color: white;
     font-weight: bold;
     border-top-left-radius: 8px;
@@ -156,7 +155,7 @@ table tr:hover td {
         font-size: 1.5rem;
     }
 
-    .profile-page .user-info, .search-history {
+    .profile-page .user-info, .search-history, .favorites {
         width: 90%;
         margin: 20px auto;
     }
