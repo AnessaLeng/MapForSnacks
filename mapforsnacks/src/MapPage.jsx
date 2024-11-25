@@ -3,7 +3,6 @@ import Select from "react-select";
 import "./MapPage.css";
 import { fetchBuildings, fetchVendingMachines, fetchSnacks } from "./api/api";
 
-
 const MapPage = () => {
   const [map, setMap] = useState(null);
   const [buildings, setBuildings] = useState([]);
@@ -18,28 +17,24 @@ const MapPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [buildings, vendingMachines, snacks] = await Promise.all([
+        const [buildings, vendingMachines] = await Promise.all([
           fetchBuildings(),
           fetchVendingMachines(),
-          fetchSnacks(),
         ]);
-
+    
         const combinedData = buildings.map((building) => ({
           ...building,
           lat: parseFloat(building.lat),
           lng: parseFloat(building.lng),
-          vending_machines: vendingMachines
-            .filter((vm) => vm.building_name === building.building_name)
-            .map((machine) => ({
-              ...machine,
-              ...snacks.find((snack) => snack.snack_id === machine.snack_id),
-            })),
+          vending_machines: vendingMachines.filter((vm) =>
+            building.vending_id?.includes(vm.vending_id)
+          ),
         }));
-
+    
         setMapData(combinedData);
         setBuildings(
           buildings.map((building) => ({
-            label: building.building_name,
+            label: building.building_name, // Only the building name
             value: building.building_name,
           }))
         );
@@ -48,6 +43,7 @@ const MapPage = () => {
       }
     };
     
+
     loadGoogleMapsScript();
     loadData();
   }, []);
@@ -95,35 +91,31 @@ const MapPage = () => {
 
   const addMarkers = (mapInstance, data) => {
     const infoWindow = new window.google.maps.InfoWindow();
-
+  
     data.forEach((building) => {
       const marker = new window.google.maps.Marker({
         position: { lat: building.lat, lng: building.lng },
         map: mapInstance,
         title: building.building_name,
       });
-
+  
       marker.addListener("click", () => {
-        const vendingInfo = building.vending_machines
-          .map(
-            (vm) =>
-              `<strong>${vm.snack_name || "Unknown"}</strong> (${vm.category || "Unknown"}) - $${vm.price || "N/A"}<br>Status: ${vm.stock_status}`
-          )
-          .join("<br>");
-
         infoWindow.setContent(`
           <div>
             <h2>${building.building_name}</h2>
-            <p>${vendingInfo}</p>
+            <p><strong>Vending IDs:</strong> ${building.vending_id || "None"}</p>
+            <p><strong>Floor:</strong> ${building.floor || "Unknown"}</p>
+            <p><strong>Offerings:</strong> ${building.Offering || "Unknown"}</p>
           </div>
         `);
         infoWindow.open(mapInstance, marker);
       });
-
+  
       if (!mapInstance.markers) mapInstance.markers = [];
       mapInstance.markers.push(marker);
     });
   };
+  
 
   const clearMarkers = () => {
     if (map?.markers) {
@@ -256,7 +248,6 @@ const MapPage = () => {
       </div>
     </>
   );  
-   
 };
 
 export default MapPage;
