@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
             setUser(userData);
             setToken(token);
             localStorage.setItem('accessToken', token);
-            //localStorage.setItem('userData', JSON.stringify(userData));
             console.log("User authenticated.");
         } else {
             console.error("No valid token found.");

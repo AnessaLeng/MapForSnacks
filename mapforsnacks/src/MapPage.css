@@ -1,173 +1,259 @@
-/* Map Page Styling */
+@import url('https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;600;700&display=swap');
+
+/* General Layout */
 .map-page {
     display: flex;
     height: 100vh;
-    font-family: 'Montserrat', sans-serif;
-    background-color: #f3e6dc; 
-}
-
-/* Sidebar Styling */
-.sidebar {
-    width: 250px;
-    background: #e0e0e0; 
+    font-family: 'Inria Serif', serif;
+    transition: all 0.3s ease; /* Smooth transition for sidebar */
+    position: relative;
+  }
+  
+  .sidebar-collapsed .sidebar {
+    width: 60px; /* Show only the icons when collapsed */
+    padding: 10px 5px;
+    overflow: hidden;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 300px;
+    background: #f5f5f5;
+    border-right: 1px solid #ddd;
     padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    justify-content: space-between; /* Push important links to the bottom */
+    transition: all 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .sidebar h2 {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+  }
+  
+  .sidebar h2 img {
+    width: 30px; /* Same size as text */
+    height: 30px; /* Maintain aspect ratio */
+  }
+  
+  /* Collapsed Sidebar Icons */
+  .sidebar-collapsed .sidebar h2 {
+    display: none; /* Hide the full title in collapsed state */
+  }
+  
+  .sidebar .icon-only {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     gap: 20px;
-}
-
-/* Sidebar Title */
-.sidebar h2 {
-    font-size: 1.2rem;
-    color: #333;
-    margin-bottom: 10px;
-    text-align: left;
-    width: 100%;
-}
-
-
-/* Search Section */
-.search-section {
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: #0d625e; 
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
-}
-
-.sidebar h2 {
-    font-size: 1.2rem;
-    color: #333;
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.search-section select {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #333;
-    border: 1px solid #bbb;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  }
+  
+  .sidebar-collapsed .icon-only {
+    display: flex; /* Show icons in collapsed state */
+  }
+  
+  .sidebar .icon-only img {
+    width: 30px; /* Larger size for collapsed state */
+    height: 30px;
     cursor: pointer;
-    appearance: none;
+  }
+  
+  .sidebar-collapsed .sidebar {
+    width: 60px; /* Show only the icons when collapsed */
+    padding: 10px 5px;
+    overflow: hidden;
+  }
+
+/* Important Links Section */
+.important-links {
+  margin-top: auto; /* Ensure it stays at the bottom */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between links */
 }
 
-/* Arrow for Dropdowns */
-.search-section select::after {
-    content: '▼';
-    float: right;
-    padding-right: 10px;
-    color: #888;
+.important-links a, .important-links button {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between icon and text */
+  text-decoration: none;
+  color: #333;
+  font-size: 0.85rem; /* Slightly smaller font size */
+  font-weight: bold;
 }
 
+.important-links a img, .important-links button img {
+  width: 16px;
+  height: 16px;
+}
 
-.directions {
-    width: 90%;
-    margin-top: 80px;
-  margin-bottom: 60px;
-    padding: 15px;
-    border-radius: 8px;
+.important-links a:hover, .important-links button:hover {
+  color: #007bff; /* Blue text on hover */
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Separator Line */
+.separator {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0; /* Space around the line */
+}
+  
+  /* Collapsed Sidebar Important Links */
+  .sidebar-collapsed .important-links a {
+    justify-content: center;
+  }
+  
+  .sidebar-collapsed .important-links a span {
+    display: none; /* Hide text when collapsed */
+  }  
+  
+  /* Toggle Arrow */
+  .toggle-arrow {
+    position: absolute;
+    top: 20px;
+    left: 325px;
+    background: #007bff;
     color: white;
-    font-weight: bold;
-    background-color: #0d625e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add slight shadow */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-}
-
-.directions h3 {
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-    text-align: center;
-}
-
-.directions input {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
-    border-radius: 5px;
-    border: none;
-}
-
-/* Help/Feedback Section */
-.help-feedback {
-
-    width: 90%;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .sidebar-collapsed .toggle-arrow {
+    left: 55px; /* Adjust for collapsed sidebar */
+  }
+  
+  .toggle-arrow:hover {
+    background: #0056b3;
+  }
+  
+  /* Directions Box */
+  .directions-box input {
+    font-family: 'Inria Serif', serif; /* Change to Inria Serif */
+    font-size: 0.9rem; /* Adjust size if needed */
+    color: #333; /* Regular text color */
     padding: 10px;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    background-color: #0d625e; /* Kept original color */
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 50px;
-}
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
 
-.help-item {
+  .directions-box input::placeholder {
+    font-family: 'Inria Serif', serif; /* Change placeholder font */
+    font-style: italic; /* Optional: Add an italic style */
+    color: #aaa; /* Light gray for placeholder */
+  }
+  
+  .directions-box h3 {
+    margin-bottom: 10px;
+  }
+  
+  .directions-box input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .directions-box button {
+    width: 100%;
+    padding: 10px;
+    background: #3792f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .directions-box button:hover {
+    background: #4d99eb;
+  }
+  
+  /* Map Container */
+  .map-container {
+    flex: 1;
+    transition: all 0.3s ease; /* Adjusts size dynamically with sidebar */
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.help-item img.icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-}
-
-/* Map Section */
-.map-container {
-    flex: 1;
-    padding: 20px;
+    justify-content: center;
+  }
+  
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Navigation Bar */
+.navbar {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.hero {
-    font-size: 1.5rem;
-    color: #b53d00;
+    padding: 10px 0;
+  }
+  
+  .navbar .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .navbar .nav-link {
+    color: #007bff; /* Blue text for links */
+    text-decoration: underline;
     font-weight: bold;
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-/* Map */
-#map {
-    width: 100%;
-    height: calc(100vh - 120px);
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
+    font-size: 1rem;
+    font-family: 'Inknut Antiqua', serif;
+  }
+  
+  .navbar .nav-link:hover {
+    text-decoration: underline;
+  }
+  
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
     .map-page {
-        flex-direction: column;
+      flex-direction: column;
     }
-
+  
     .sidebar {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 2px solid #b0b0b0;
+      width: 100%;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid #ddd;
     }
-
-    #map {
-        height: 400px;
+  
+    .sidebar-collapsed .sidebar {
+      width: 60px;
+      padding: 0;
+      border: none;
+    }
+  
+    .toggle-arrow {
+      top: 10px; /* Adjust for smaller screens */
+      left: calc(50% - 15px); /* Centered on the page */
+    }
+  
+    .map-container {
+      height: calc(100vh - 300px);
     }
 }

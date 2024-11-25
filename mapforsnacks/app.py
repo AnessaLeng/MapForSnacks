@@ -173,8 +173,6 @@ def log_search_history():
     history_entry = {
         'user_id': user['_id'],
         'user_email': current_user_email,
-        'vending_id': data.get('vending_id'),
-        'snack_id': data.get('snack_id'),
         'building_name': data.get('building_name'),
         'from': data.get('from'),
         'to': data.get('to'),
