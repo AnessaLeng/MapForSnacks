@@ -52,22 +52,6 @@ function Profile() {
         }, [googleId, user]); 
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('authToken');
-          
-            try {
-              const response = await axios.get('http://localhost:5000/api/user/data', {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              
-              const { searchHistory, favorites } = response.data;
-              setSearchHistory(searchHistory);
-              setFavorites(favorites);
-            } catch (error) {
-              console.error('Error fetching user data:', error);
-            }
-          };
-
         const fetchFavorites = async () => {
             const token = localStorage.getItem('authToken');
             if (!token) {
@@ -89,17 +73,29 @@ function Profile() {
 
         const fetchSearchHistory = async () => {
             const token = localStorage.getItem('authToken');
+            if (!token) {
+                console.error('No token found');
+                return;
+            }
 
             try {
-                const response = await axios.get('http://127.0.0.1:5000/search_history', {
+                const response = await axios.get('http://127.0.0.1:5000/api/search_history', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     }
-                });
+                }); 
                 setSearchHistory(response.data);
             } catch (error) {
                 console.error('Error fetching search history:', error);
                 //setFlashMessage({message: "Failed to load search history.", type: "error"});
+                if (error.response) {
+                    console.error('Response error:', error.response);
+                } else if (error.request) {
+                    console.error('Request error:', error.request);
+                } else {
+                    console.error('General error:', error.message);
+                }
+        
             }
         };
 
@@ -109,22 +105,44 @@ function Profile() {
         }
     }, [isAuthenticated, googleId]);
 
-    const handleDeleteFavorite = async (favoriteId) => {
+    const handleDeleteFavorite = async (buildingName) => {
         const token = localStorage.getItem('authToken');
         try {
-            const response = await axios.delete(`http://localhost:5000/favorites/${favoriteId}`, {
+            const response = await axios.delete(`http://localhost:5000/favorites`, {
                 headers: {
                     Authorization: `Bearer ${token}`,  // Add the token in the header
-                }
+                },
+                data: { building_name: buildingName}
             });
 
             if (response.status === 200) {
-                setFavorites(prevFavorites => prevFavorites.filter(fav => fav.id !== favoriteId));
+                setFavorites(prevFavorites => prevFavorites.filter(fav => fav.building_name !== buildingName));
                 setFlashMessage({message: "Favorite removed successfully.", type: "success"});
             }
         } catch (error) {
             console.error('Error removing favorite:', error);
             setFlashMessage({message: "Failed to remove favorite. Please try again.", type: "error"});
+        }
+    };
+
+    const handleDeleteSearchHistory = async () => {
+        const token = localStorage.getItem('authToken');
+            if (window.confirm('Are you sure you want to delete your search history?')) {
+            try {
+                const response = await axios.delete(`http://localhost:5000/search_history`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,  // Add the token in the header
+                    }
+                });
+
+                if (response.status === 200) {
+                    setSearchHistory([]);
+                    setFlashMessage({message: "Search history removed successfully.", type: "success"});
+                }
+            } catch (error) {
+                console.error('Error removing search history:', error);
+                setFlashMessage({message: "Failed to remove history. Please try again.", type: "error"});
+            } 
         }
     };
 
@@ -141,13 +159,14 @@ function Profile() {
     }
 
     if (!profileData) {
-        return <div>Error loading profile or user not authorized.</div>;
+        return <div>Loading user profile...</div>;  // Display loading while waiting for profileData
     }
+
 
     return (
         <div className="profile-page">
             <section className="hero">
-            <h1>{profileData.first_name ? `${profileData.first_name} ${profileData.last_name}'s Profile` : "Profile"}</h1>
+            <h1>{`${profileData.first_name} ${profileData.last_name}'s Profile`}</h1>
             </section>
             <FlashMessage />
             {flashMessage.message && (
@@ -164,7 +183,7 @@ function Profile() {
                 </div>
             )}
             <section className="user-info">
-                <h3>Name: {profileData.first_name ? `${profileData.first_name} ${profileData.last_name}` : 'N/A'}</h3>
+                <h3>Name: {`${profileData.first_name} ${profileData.last_name}` || 'N/A'}</h3>
                 <h3>Email: {profileData.email || 'N/A'}</h3>
             </section>
             <section className="favorites">
@@ -187,7 +206,7 @@ function Profile() {
                                 <td>{entry.Offering}</td>
                                 <td>
                                     <button
-                                        onClick={() => handleDeleteFavorite(entry._id)}
+                                        onClick={() => handleDeleteFavorite(entry.building_name)}
                                         className="delete-button"
                                     >
                                         Delete
@@ -205,6 +224,9 @@ function Profile() {
             <section className="search-history">
                 <div>
                     <h3>Recent Search History</h3>
+                    <button onClick={handleDeleteSearchHistory} className="delete-button">
+                        Delete History
+                    </button>
                     <table>
                         <thead>
                             <tr>
@@ -215,13 +237,16 @@ function Profile() {
                         </thead>
                         <tbody>
                             {searchHistory.length > 0 ? (
-                                searchHistory.map((entry, index) => (
+                                searchHistory.map((entry, index) => {
+                                    const formattedTimestamp = new Date(entry.timestamp).toLocaleString();
+                                    return (
                                     <tr key={index}>
-                                        <td>{entry.timestamp.toLocaleString()}</td>
-                                        <td>{`${entry.from_location} → ${entry.to_location}`}</td>
-                                        <td>{entry.filtered_search || 'N/A'}</td>
+                                        <td>{formattedTimestamp}</td>
+                                        <td>{`${entry.from} → ${entry.to}`}</td>
+                                        <td>{entry.building_name || 'N/A'}</td>
                                     </tr>
-                                ))
+                                    );
+                                })
                             ) : (  
                                 <tr><td colSpan="3">No search history available.</td></tr>
                             )}  

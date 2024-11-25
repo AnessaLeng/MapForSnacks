@@ -157,14 +157,6 @@ def get_profile():
             return jsonify(user_data), 200
         except Exception as e:
             return jsonify({"msg": "User not found"}), 404
-        
-@app.route('/api/user/data', methods=['GET'])
-@jwt_required()
-def get_user_data(current_user):
-    return jsonify({
-        'searchHistory': current_user['search_history'],
-        'favorites': current_user['favorites']
-    })
 
 @app.route('/search_history', methods=['POST'])
 @jwt_required()
@@ -180,6 +172,7 @@ def log_search_history():
 
     history_entry = {
         'user_id': user['_id'],
+        'user_email': current_user_email,
         'vending_id': data.get('vending_id'),
         'snack_id': data.get('snack_id'),
         'building_name': data.get('building_name'),
@@ -191,26 +184,40 @@ def log_search_history():
     db.history.insert_one(history_entry)
     return jsonify({'message': 'Search history saved!'}), 200
 
-@app.route('/search_history', methods=['GET'])
+@app.route('/api/search_history', methods=['GET'])
 @jwt_required()
 def get_search_history():
+    current_user_email = get_jwt_identity()
+    
+    user = db.users.find_one({'email': current_user_email})
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
+    
+    search_history = list(search_history_collection.find({"user_id": ObjectId(user["_id"])}))
+
+    if not search_history:
+        return jsonify({'msg': 'No history found'}), 404
+    
+    for entry in search_history:
+        entry['_id'] = str(entry['_id'])  # Convert _id to string
+        entry['user_id'] = str(entry['user_id'])  # Convert user_id to string
+    return jsonify(search_history)
+
+@app.route('/search_history', methods=['DELETE'])
+@jwt_required()
+def delete_search_history():
     current_user_email = get_jwt_identity()
 
     user = db.users.find_one({'email': current_user_email})
     if not user:
         return jsonify({'msg': 'User not found'}), 404
+    
+    result = db.history.delete_many({'user_id': ObjectId(user['_id'])})
 
-    search_history = list(search_history_collection.find({"user_id": user['_id']}))
+    if result.deleted_count == 0:
+        return jsonify({'msg': 'No history found to delete'}), 404
+    return jsonify({"message": "Search history deleted successfully!"}), 200
 
-    if not search_history:
-        return jsonify({'msg': 'No history found'}), 404
-
-    for entry in search_history:
-        entry['_id'] = str(entry['_id'])
-        entry['from_location'] = entry.get('from', 'N/A')
-        entry['to_location'] = entry.get('to', 'N/A')
-        entry['filtered_search'] = entry.get('building_name', 'N/A')
-    return jsonify(search_history)
 
 @app.route('/api/user/favorites', methods=['POST'])
 @jwt_required()
@@ -251,19 +258,28 @@ def get_favorites():
     # Return the 'favorites' array from the user document
     return jsonify(user.get('favorites', []))
 
-@app.route('/favorites/<favorite_id>', methods=['DELETE'])
+@app.route('/favorites', methods=['DELETE'])
 @jwt_required()
-def delete_favorite(favorite_id):
+def delete_favorite():
     current_user_email = get_jwt_identity()
+    request_data = request.get_json()
+    building_name = request_data.get('building_name')
+
+    if not building_name:
+        return jsonify({'msg': 'Building name not provided'}), 400
 
     user = db.users.find_one({'email': current_user_email})
     if not user:
         return jsonify({'msg': 'User not found'}), 404
     
-    db.users.update_one(
+    result = db.users.update_one(
         {'email': current_user_email},
-        {"$pull": {"favorites": {"_id": ObjectId(favorite_id)}}}
+        {"$pull": {"favorites": {"building_name": building_name}}}
     )
+
+    if result.modified_count == 0:
+        return jsonify({'msg': 'Favorite not found or already removed'}), 404
+
     return jsonify({"message": "Favorite deleted successfully!"}), 200
 
 @app.route('/logout', methods=['POST'])
