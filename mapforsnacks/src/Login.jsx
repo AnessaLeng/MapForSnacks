@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useAuth } from './Authentication';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FlashMessage from './FlashMessage';
 import axios from 'axios';
 import './Login.css';
 import './App.css';
 
 const Login = () => {
-    const { login } = useAuth();
+    const { isAuthenticated, login, logout } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
@@ -91,6 +91,23 @@ const Login = () => {
 
     return (
         <div className="login-page">
+            <nav className="navbar">
+            <ul className="navbar-list">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/map">Map</Link></li>
+                {!isAuthenticated ? (
+                    <>
+                        <li><Link to="/signup">Signup</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                    </>
+                ) : (
+                    <>
+                        <li><Link to="/profile">Profile</Link></li>
+                        <li><button onClick={logout}>Logout</button></li>
+                    </>
+                )}
+            </ul>
+            </nav>
             <section className="hero">
                 <h1>Login</h1>
             </section>

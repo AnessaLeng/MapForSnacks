@@ -7,7 +7,7 @@ import './MapPage.css';
 import { fetchBuildings, fetchVendingMachines, fetchSnacks, saveSearchHistory, fetchSearchHistory } from "./api/api";
 
 const MapPage = () => {
-    const { logout } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
     const [map, setMap] = useState(null);
     const [buildings, setBuildings] = useState([]);
     const [selectedBuildings, setSelectedBuildings] = useState([]);
@@ -170,21 +170,6 @@ const MapPage = () => {
                     building_name: building_name,
                 });
             });
-
-            console.log(selectedNames);
-            
-            {/*
-            // Save the filter search to history
-            selectedNames.forEach(buildingName => {
-                const building = mapData.find(b => b.building_name === buildingName);
-                if (building) {
-                    building.vending_machines.forEach(vm => {
-                        handleSearchHistory({
-                            building_name: buildingName,
-                        });
-                    });
-                }
-            }); */}
         };
         
         const handleDirections = () => {
@@ -303,6 +288,23 @@ const MapPage = () => {
         ) : (
             // Expanded Sidebar with Full Content
             <>
+            <nav className="navbar">
+            <ul className="navbar-list">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/map">Map</Link></li>
+                {!isAuthenticated ? (
+                    <>
+                        <li><Link to="/signup">Signup</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                    </>
+                ) : (
+                    <>
+                        <li><Link to="/profile">Profile</Link></li>
+                        <li><button onClick={logout}>Logout</button></li>
+                    </>
+                )}
+            </ul>
+            </nav>
             <h2>
                 <img src="/images/building.png" alt="Building Icon" />
                 Filter Snack Location

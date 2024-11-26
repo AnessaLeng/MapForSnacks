@@ -290,6 +290,56 @@
   .navbar .nav-link:hover {
     text-decoration: underline;
   }
+
+  /* Navbar Styling */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    z-index: 10;
+    padding: 10px;
+}
+
+.navbar-list {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-list li {
+    padding: 6px 10px;
+    padding-bottom: 5px;
+    margin: 0 15px;
+}
+
+.navbar-list li:hover a, .navbar-list li:hover button {
+    color: rgb(212, 33, 9);
+    cursor: pointer;
+}
+
+.navbar-list li a, .navbar-list li button {
+    text-decoration: none; 
+    color: black;
+    font-family: 'Roboto', sans-serif; 
+    font-size: 16px; 
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar button {
+    background-color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: center;
+}
   
   
   /* Responsive Design */
