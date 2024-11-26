@@ -12,6 +12,7 @@ const MapPage = () => {
     const [buildings, setBuildings] = useState([]);
     const [selectedBuildings, setSelectedBuildings] = useState([]);
     const [mapData, setMapData] = useState([]);
+    const [snackData, setSnackData] = useState([]);
     const [directionsRenderer, setDirectionsRenderer] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar toggle state
     const fromInputRef = useRef(null);
@@ -22,9 +23,10 @@ const MapPage = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [buildings, vendingMachines] = await Promise.all([
+                const [buildings, vendingMachines, snacks] = await Promise.all([
                     fetchBuildings(),
                     fetchVendingMachines(),
+                    fetchSnacks(),
                 ]);
 
                 const combinedData = buildings.map((building) => ({
@@ -37,6 +39,7 @@ const MapPage = () => {
                 }));
 
                 setMapData(combinedData);
+                setSnackData(snacks);
                 setBuildings(
                     buildings.map((building) => ({
                     label: building.building_name, // Only the building name
@@ -345,11 +348,32 @@ const MapPage = () => {
         <div className="map-container">
             <div id="map"></div>
         </div>
-        <div className="snackID">
-            
+        <div className="snack-table-container">
+          <h2>Snack Table</h2>
+          <table>
+            <thead>
+              <tr>
+                <th className="snack-id">Snack ID</th>
+                <th>Snack Name</th>
+                <th>Category</th>
+                <th className="price">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {snackData.map((snack) => (
+                <tr key={snack.snack_id}>
+                  <td className="snack-id">{snack.snack_id}</td>
+                  <td>{snack.snack_name}</td>
+                  <td>{snack.category}</td>
+                  <td className="price">${snack.price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
     </div>
-    </>);
+    </>
+    );
     };
     
     export default MapPage;
