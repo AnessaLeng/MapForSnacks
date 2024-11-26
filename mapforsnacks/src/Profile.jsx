@@ -161,6 +161,23 @@ function Profile() {
 
     return (
         <div className="profile-page">
+            <nav className="navbar">
+            <ul className="navbar-list">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/map">Map</Link></li>
+                {!isAuthenticated ? (
+                    <>
+                        <li><Link to="/signup">Signup</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                    </>
+                ) : (
+                    <>
+                        <li><Link to="/profile">Profile</Link></li>
+                        <li><button onClick={handleLogout}>Logout</button></li>
+                    </>
+                )}
+            </ul>
+            </nav>
             <section className="hero">
             <h1>{`${profileData.first_name} ${profileData.last_name}'s Profile`}</h1>
             </section>
@@ -179,8 +196,8 @@ function Profile() {
                 </div>
             )}
             <section className="user-info">
-                <h3>Name: {`${profileData.first_name} ${profileData.last_name}` || 'N/A'}</h3>
-                <h3>Email: {profileData.email || 'N/A'}</h3>
+                <h3><span style={{fontWeight: "bold", fontSize: "25px"}}>Name:</span> {`${profileData.first_name} ${profileData.last_name}` || 'N/A'}</h3>
+                <h3><span style={{fontWeight: "bold", fontSize: "25px"}}>Email:</span> {profileData.email || 'N/A'}</h3>
             </section>
             <section className="favorites">
                 <div>

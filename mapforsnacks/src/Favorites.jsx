@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './Authentication';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FlashMessage from './FlashMessage';
 import './Favorites.css';
 import './App.css';
 
 function Favorites() {
-    const { isAuthenticated, googleId, user } = useAuth();
+    const { isAuthenticated, googleId, user, logout } = useAuth();
     const [profileData, setProfileData] = useState(null);
     const [favorites, setFavorites] = useState([]);
     const [flashMessage, setFlashMessage] = useState({ message: '', type: '' });
@@ -100,6 +100,23 @@ function Favorites() {
 
     return (
         <div className="favorites-page">
+            <nav className="navbar">
+            <ul className="navbar-list">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/map">Map</Link></li>
+                {!isAuthenticated ? (
+                    <>
+                        <li><Link to="/signup">Signup</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                    </>
+                ) : (
+                    <>
+                        <li><Link to="/profile">Profile</Link></li>
+                        <li><button onClick={logout}>Logout</button></li>
+                    </>
+                )}
+            </ul>
+            </nav>
             <section className="hero">
             <h1>{`${profileData.first_name}'s Favorites`}</h1>
             </section>

@@ -11,7 +11,7 @@ html, body {
     align-items: center;
     font-family: 'Montserrat', sans-serif;
     text-align: center;
-    padding: 20px;
+    padding: 80px;
     background-color: #F3E2C7;
 }
 
@@ -26,6 +26,56 @@ html, body {
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     margin-bottom: 30px;
+}
+
+/* Navbar Styling */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    z-index: 10;
+    padding: 10px;
+}
+
+.navbar-list {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-list li {
+    padding: 6px 10px;
+    padding-bottom: 5px;
+    margin: 0 15px;
+}
+
+.navbar-list li:hover a, .navbar-list li:hover button {
+    color: rgb(212, 33, 9);
+    cursor: pointer;
+}
+
+.navbar-list li a, .navbar-list li button {
+    text-decoration: none; 
+    color: black;
+    font-family: 'Roboto', sans-serif; 
+    font-size: 16px; 
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.navbar button {
+    background-color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: center;
 }
 
 .login-form {
@@ -81,7 +131,7 @@ html, body {
 }
 
 .google-login {
-    width: 45%;
+    width: 55%;
     max-width: 400px;
     height: 52px;
     padding-top: 12px;
