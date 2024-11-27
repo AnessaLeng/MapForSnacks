@@ -35,8 +35,22 @@ except Exception as e:
 # Building data endpoint
 @app.route('/api/buildings', methods=['GET'])
 def get_buildings():
-    buildings = list(buildings_collection.find({}, {"_id": 0}))
+    buildings = list(buildings_collection.find({}, {
+        "_id": 0,
+        "building_name": 1,
+        "lat": 1,
+        "lng": 1,
+        "Offering": 1,
+        "floor": 1,
+        "vending_id": 1
+    }))
     return jsonify(buildings)
+
+# Machine data endpoint (updated to use vending_id)
+@app.route('/api/vending-machines', methods=['GET'])
+def get_vending_machines():
+    vending_machines = list(machine_collection.find({}, {"_id": 0}))
+    return jsonify(vending_machines)
 
 # Snack data endpoint
 @app.route('/api/snacks', methods=['GET'])
@@ -44,11 +58,6 @@ def get_snacks():
     snacks = list(snacks_collection.find({}, {"_id": 0}))
     return jsonify(snacks)
 
-# Machine data endpoint
-@app.route('/api/machine', methods=['GET'])
-def get_machine():
-    machine_data = list(machine_collection.find({}, {"_id": 0}))
-    return jsonify(machine_data)
 
 
 @app.route('/signup', methods=['POST'])
@@ -286,4 +295,4 @@ def logout():
     return jsonify(msg="Successfully logged out"), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
