@@ -1,4 +1,6 @@
 /* Signup Page Styling */
+@import url('https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;600;700&display=swap');
+
 html, body {
     height: 100%;
     margin: 0; /* Remove default margin */
@@ -10,7 +12,7 @@ html, body {
     justify-content: center;
     align-items: center;
     height: 100%;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inria Serif', sans-serif;
     text-align: center;
     padding: 80px;
     background-color: #f1e3ce; /* Light beige background */
@@ -22,7 +24,7 @@ html, body {
     color: white;
     font-size: 2rem;
     font-weight: bold;
-    padding: 60px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     margin-bottom: 30px;
@@ -81,9 +83,9 @@ html, body {
 /* Signup Form Container */
 .signup-form {
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
     margin: 0 auto;
-    padding: 25px;
+    padding: 20px;
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -91,10 +93,11 @@ html, body {
 
 /* Input Fields */
 .signup-form .form-input {
+    font-family: 'Inria Serif', sans-serif;
     width: 90%;
     max-width: 400px;
-    padding: 12px;
-    margin: 12px 0;
+    padding: 10x;
+    margin: 0px 0;
     border-radius: 8px;
     border: 1px solid #ddd;
     font-size: 1rem;
@@ -120,7 +123,7 @@ html, body {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inria Serif', sans-serif;
     font-weight: bold;
     font-size: 1.1rem;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -133,13 +136,11 @@ html, body {
 }
 
 .signup-page .google-login {
-    width: 90%;
+    width: 55%;
     max-width: 400px;
-    height: 52px;
+    height: 40px;
     padding-top: 12px;
-    margin-left: 50px;
-    margin-top: 20px;
-    margin-bottom: 15px;
+    margin: 20px auto 15px auto; /* Center horizontally */
     border-radius: 25px;
     box-shadow: 0px 4px 8px rgba(37, 107, 219, 0.2); 
     background-color: white;

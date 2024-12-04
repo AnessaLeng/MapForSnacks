@@ -1,7 +1,13 @@
 /* Overall page styling */
+@import url('https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;600;700&display=swap');
+
 html, body {
     height: 100%;
     margin: 0; /* Remove default margin */
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    font-family: 'Inria Serif', sans-serif;
 }
 
 .login-page {
@@ -9,7 +15,6 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: 'Montserrat', sans-serif;
     text-align: center;
     padding: 80px;
     background-color: #F3E2C7;
@@ -21,7 +26,7 @@ html, body {
     color: white;
     font-size: 2rem;
     font-weight: bold;
-    padding: 20px 200px;
+    padding: 10px 100px;
     text-align: center;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -87,7 +92,7 @@ html, body {
     border-radius: 20px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     width: 80%;
-    max-width: 500px;
+    max-width: 450px;
     transition: transform 0.2s ease;
 }
 
@@ -97,6 +102,7 @@ html, body {
 
 
 .login-form .form-input {
+    font-family: 'Inria Serif', sans-serif;
     width: 90%;
     max-width: 400px;
     padding: 15px;
@@ -118,7 +124,7 @@ html, body {
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inria Serif', sans-serif;
     font-weight: bold;
     font-size: 1.2rem;
     transition: background-color 0.3s ease, transform 0.3s ease;
@@ -133,7 +139,7 @@ html, body {
 .google-login {
     width: 55%;
     max-width: 400px;
-    height: 52px;
+    height: 40px;
     padding-top: 12px;
     margin-top: 20px;
     margin-bottom: 15px;

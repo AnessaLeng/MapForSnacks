@@ -1,65 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Yaldevi:wght@200..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;600;700&display=swap');
 
 html, body {
   margin: 0;
   padding: 0;
-  background-color: #f1e3ce; /* Light beige background */
+  background-color: #fefbf6;
   height: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
-/* General layout and centering */
 .main-page {
-  text-align: center;
-  padding: 80px;
-  background-color: #f1e3ce;
-}
-
-/* Navigation links styling */
-.nav-links {
+  min-height: 100vh; /* Ensures the main page fills the viewport */
   display: flex;
-  justify-content: center;
-  gap: 100px;
-  margin-bottom: 20px;
-  border: 0px;
-  background-color: #f1e3ce;
-}
-
-.nav-link {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: bold;
-  text-decoration: none;
-  font-size: 2rem;
-  transition: color 0.3s ease;
-  background-color: #f1e3ce;
-  border: 0px;
-}
-
-.nav-link:nth-child(1) {
-  color: #ff6347;
-}
-
-.nav-link:nth-child(2),
-.nav-link:nth-child(3) {
-  color: #256bdb;
-}
-
-.nav-link:hover {
-  color: #72DBDA;
+  flex-direction: column;
+  text-align: center;
+  padding: 0; /* Ensure no extra padding */
+  background-color: #ffeacb;
+  box-sizing: border-box; /* Includes padding in height calculations */
 }
 
 /* Vending Machine Images Section */
 .hero-images {
   display: flex;
-  justify-content: center;
-  margin-top: 80px;
-  margin-bottom: 30px;
-  padding: 0px;
+  justify-content: center; /* Aligns images in the center */
+  gap: 0; /* Removes spacing between images */
+  position: relative; /* Allows positioning of child elements */
 }
 
 .hero-image {
-  width: 15%;
-  height: 40%;
-  
+  width: 250px; /* Adjust the width of each image */
+  height: auto; /* Maintain aspect ratio */
+  margin: 0; /* Remove any default margin */
+  padding: 0; /* Remove any default padding */
+  border: none; /* Remove borders */
+  position: relative; /* Ensure positioning is relative */
+  margin-left: -65px; /* Create overlap by moving each image to the left */
 }
 
 /* Title Section */
@@ -71,7 +47,7 @@ html, body {
 }
 
 .title-section h1 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Yaldevi', sans-serif;
   color: #e3b342;
   font-size: 9rem;
   margin: 0;
@@ -79,12 +55,12 @@ html, body {
 
 /* Main Description and Button */
 .description {
-  max-width: 600px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 1.5rem;
+  max-width: 900px; /* Increase the max width to make the text span more area */
+  font-family: 'Inria Serif', serif;
+  font-size: 1.5rem; /* Adjust the font size if necessary */
   color: #333;
-  line-height: 1.5;
-  margin: 20px auto;
+  line-height: 1.6; /* Slightly increase line height for better readability */
+  margin: 10px auto;
 }
 
 .hero-button {
@@ -93,13 +69,14 @@ html, body {
   padding: 12px 24px;
   border: none;
   border-radius: 20px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inria Serif', serif;
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
   margin-top: 20px;
 }
+
 .button-row {
     display: flex; /* Aligns items in a row */
     gap: 10px; /* Adds space between the buttons */
@@ -126,35 +103,6 @@ html, body {
 .hero-button:hover {
   background-color: #e5533d;
   transform: translateY(-3px);
-}
-
-/* About Section */
-.about-section {
-  background-color:#5eadbf;
-  ;
-  padding: 20px;
-  border-radius: 8px;
-  color: #333;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 200px;
-  width: 80%;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.about-section h2 {
-  font-family: 'Montserrat', sans-serif;
-  color: #010101;
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-}
-
-.about-section p {
-  font-family: 'Roboto', sans-serif;
-  color: #555;
-  font-size: 1.5rem;
-  line-height: 1.6;
 }
 
 /* Responsive Design */
