@@ -26,7 +26,7 @@ function Signup() {
         e.preventDefault();
     
         try {
-            const res = await axios.post('http://localhost:5000/signup', { first_name, last_name, email, password });
+            await axios.post('http://localhost:5000/signup', { first_name, last_name, email, password });
             // console.log(res.data);
 
             setMessage('Signup successful! Please login.', 'success');

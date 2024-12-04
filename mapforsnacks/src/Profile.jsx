@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './Authentication';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import FlashMessage from './FlashMessage';
 import './Profile.css';
 import './App.css';
@@ -49,7 +49,7 @@ function Profile() {
             setMessage("You need to log in first to view this page.", "error");
             navigate('/login');
         }  
-        }, [googleId, user]); 
+        }, [googleId, user, navigate]); 
 
     useEffect(() => {
         const fetchFavorites = async () => {

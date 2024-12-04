@@ -47,7 +47,7 @@ function Favorites() {
             setMessage("You need to log in first to view this page.", "error");
             navigate('/login');
         }  
-        }, [googleId, user]); 
+        }, [googleId, user, navigate]); 
 
     useEffect(() => {
             const fetchFavorites = async () => {
