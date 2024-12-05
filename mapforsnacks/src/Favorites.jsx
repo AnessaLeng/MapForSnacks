@@ -47,7 +47,7 @@ function Favorites() {
             setMessage("You need to log in first to view this page.", "error");
             navigate('/login');
         }  
-        }, [googleId, user]); 
+        }, [googleId, user, navigate]); 
 
     useEffect(() => {
             const fetchFavorites = async () => {
@@ -95,7 +95,12 @@ function Favorites() {
     };
 
     if (!profileData) {
-        return <div>Loading user favorites...</div>;  // Display loading while waiting for profileData
+        return (
+            <div className="loading-overlay">
+                <div className="spinner"></div> {/* You can use your spinner component here */}
+                <p>Loading your favorites...</p>
+            </div>
+        );  // Display loading while waiting for favorites
     }
 
     return (
@@ -123,12 +128,15 @@ function Favorites() {
             <FlashMessage />
             {flashMessage.message && (
                 <div style={{
+                    width: '90%',
+                    maxWidth: '600px',
+                    margin: '10px auto',
                     padding: '10px 20px',
                     borderRadius: '5px',
                     color: '#fff',
                     fontWeight: 'bold',
                     textAlign: 'center',
-                    marginBottom: '10px',
+                    boxSizing: 'border-box',
                     backgroundColor: flashMessage.type === 'success' ? 'green' : 'red',
                 }}>
                     <p>{flashMessage.message}</p>

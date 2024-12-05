@@ -114,12 +114,15 @@ const Login = () => {
             <FlashMessage />
             {flashMessage.message && (
                 <div style={{
+                    width: '90%',
+                    maxWidth: '600px',
+                    margin: '10px auto',
                     padding: '10px 20px',
                     borderRadius: '5px',
                     color: '#fff',
                     fontWeight: 'bold',
                     textAlign: 'center',
-                    marginBottom: '10px',
+                    boxSizing: 'border-box',
                     backgroundColor: flashMessage.type === 'success' ? 'green' : 'red',
                 }}>
                     <p>{flashMessage.message}</p>
