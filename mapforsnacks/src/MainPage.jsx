@@ -2,16 +2,9 @@ import './MainPage.css';
 import React from 'react';
 import { useAuth } from './Authentication';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 
 const MainPage = () => {
-  const { isAuthenticated, login, logout } = useAuth();
-
-  // Function to scroll to the About section
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    aboutSection.scrollIntoView({ behavior: 'smooth' });
-  };
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <div className="main-page">
