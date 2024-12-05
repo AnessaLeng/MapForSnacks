@@ -17,12 +17,15 @@ function FlashMessage() {
     if (!flash.message) return null;
 
     const flashMessageStyle = {
+        width: '90%',
+        maxWidth: '600px',
+        margin: '10px auto',
         padding: '10px 20px',
         borderRadius: '5px',
         color: '#fff',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: '10px',
+        boxSizing: 'border-box',
         transition: 'opacity 0.5s ease',
         backgroundColor: flash.type === 'success' ? 'green' : 'red', // Green for success, Red for error
     };

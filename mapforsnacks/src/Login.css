@@ -1,7 +1,12 @@
 /* Overall page styling */
+@import url('https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;600;700&display=swap');
+
 html, body {
-    height: 100%;
     margin: 0; /* Remove default margin */
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-family: 'Inria Serif', sans-serif;
 }
 
 .login-page {
@@ -9,10 +14,9 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-family: 'Montserrat', sans-serif;
     text-align: center;
-    padding: 80px;
     background-color: #F3E2C7;
+    height: 100vh;
 }
 
 /* Header styling */
@@ -21,7 +25,7 @@ html, body {
     color: white;
     font-size: 2rem;
     font-weight: bold;
-    padding: 20px 200px;
+    padding: 10px 170px;
     text-align: center;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -83,11 +87,11 @@ html, body {
     flex-direction: column;
     align-items: center;
     background: #ffffff; 
-    padding: 50px;
+    padding: 35px;
     border-radius: 20px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    width: 80%;
-    max-width: 500px;
+    width: 25%;
+    max-width: 450px;
     transition: transform 0.2s ease;
 }
 
@@ -97,30 +101,37 @@ html, body {
 
 
 .login-form .form-input {
-    width: 90%;
+    font-family: 'Inria Serif', sans-serif;
+    width: 250px;
     max-width: 400px;
-    padding: 15px;
-    font-size: 1.1rem;
-    border: 2px solid #256BDB; /* Blue border */
-    border-radius: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
     margin-bottom: 15px;
+    border: 1px solid #ddd;
+    background-color: #f7f7f7; /* Soft background for inputs */
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.login-form .form-input:focus {
+    background-color: #e8f0fe; /* Light blue on focus */
+    transform: scale(1.02);
 }
 
 /* Submit button */
 .login-form button {
-    width: 90%;
+    width: 100%;
     max-width: 400px;
-    height: 60px;
+    height: 40px;
     background: linear-gradient(90deg, #1D8DD6, #256BDB); /* Blue gradient */
     color: white;
-    padding: 15px;
     border: none;
-    border-radius: 30px;
+    border-radius: 8px;
     cursor: pointer;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inria Serif', sans-serif;
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0px 4px 8px rgba(37, 107, 219, 0.4);
 }
@@ -131,13 +142,13 @@ html, body {
 }
 
 .google-login {
-    width: 55%;
+    width: 250px;
     max-width: 400px;
-    height: 52px;
-    padding-top: 12px;
-    margin-top: 20px;
-    margin-bottom: 15px;
-    border-radius: 25px;
+    height: 40px;
+    padding-top: 0;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(37, 107, 219, 0.2); 
     background-color: white;
 }
