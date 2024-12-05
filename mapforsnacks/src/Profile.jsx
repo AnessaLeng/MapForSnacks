@@ -155,7 +155,12 @@ function Profile() {
     };
 
     if (!profileData) {
-        return <div>Loading user profile...</div>;  // Display loading while waiting for profileData
+        return (
+            <div className="loading-overlay">
+                <div className="spinner"></div> {/* You can use your spinner component here */}
+                <p>Loading your profile...</p>
+            </div>
+        );  // Display loading while waiting for profileData
     }
 
 
@@ -179,17 +184,20 @@ function Profile() {
             </ul>
             </nav>
             <section className="hero">
-            <h1>{`${profileData.first_name} ${profileData.last_name}'s Profile`}</h1>
+            <h1>Profile</h1>
             </section>
             <FlashMessage />
             {flashMessage.message && (
                 <div style={{
+                    width: '90%',
+                    maxWidth: '600px',
+                    margin: '10px auto',
                     padding: '10px 20px',
                     borderRadius: '5px',
                     color: '#fff',
                     fontWeight: 'bold',
                     textAlign: 'center',
-                    marginBottom: '10px',
+                    boxSizing: 'border-box',
                     backgroundColor: flashMessage.type === 'success' ? 'green' : 'red',
                 }}>
                     <p>{flashMessage.message}</p>
