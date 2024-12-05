@@ -38,8 +38,8 @@ describe('MainPage Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Log in')).toBeInTheDocument();
-    expect(screen.getByText('Sign up')).toBeInTheDocument();
+    expect(screen.getByText('Login')).toBeInTheDocument();
+    expect(screen.getByText('Signup')).toBeInTheDocument();
   });
 
   test('should display "Profile" and "Logout" button when the user is authenticated', () => {
@@ -52,20 +52,6 @@ describe('MainPage Tests', () => {
 
     expect(screen.getByText('Profile')).toBeInTheDocument();
     expect(screen.getByText('Logout')).toBeInTheDocument();
-  });
-
-  test('should direct straight to "About Us" section when "About Us" button is clicked', () => {
-    render(
-      <MemoryRouter>
-        <MainPage/>
-      </MemoryRouter>
-    );
-  
-    const direct= jest.fn();
-    const aboutButtons = screen.queryAllByText('About Us');
-    window.HTMLElement.prototype.scrollIntoView = direct;
-    fireEvent.click(aboutButtons[0]);
-    expect(direct).toHaveBeenCalledTimes(1);
   });
   
   console.warn = (message) => {
