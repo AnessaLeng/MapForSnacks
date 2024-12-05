@@ -4,6 +4,7 @@ import Login from '../Login';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from '../Authentication';
 import axios from 'axios';
+import React from 'react';
 
 // Mocking external modules
 jest.mock('axios');
