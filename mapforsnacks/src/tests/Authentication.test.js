@@ -1,131 +1,101 @@
-import React, { act } from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { AuthProvider, useAuth } from '../features/Authentication/Authentication';
 import '@testing-library/jest-dom';
-import { AuthProvider, useAuth } from '../Authentication';
-import { BrowserRouter as Router } from 'react-router-dom';
 
-// Mock localStorage to avoid actually storing items in it during tests
+// Mock the localStorage methods
 beforeEach(() => {
-  Storage.prototype.setItem = jest.fn();
-  Storage.prototype.getItem = jest.fn();
-  Storage.prototype.removeItem = jest.fn();
+  localStorage.clear();
+  sessionStorage.clear();
 });
 
+// Mocked Test Component to test the hooks
 const TestComponent = () => {
-  const { isAuthenticated, user, token, login, logout } = useAuth();
+  const { isAuthenticated, user, token, login, logout, setError } = useAuth();
 
   return (
     <div>
-      <div>{isAuthenticated ? 'Authenticated' : 'Not Authenticated'}</div>
-      {user && <div>{`Welcome, ${user.first_name}`}</div>}
-      {token && <div>{`Token: ${token}`}</div>}
-      <button onClick={() => login({ first_name: 'John', last_name: 'Doe' }, 'test-token')}>Login</button>
+      <p>{isAuthenticated ? `Welcome, ${user?.name}` : 'Not logged in'}</p>
+      <button onClick={() => login({ name: 'John' }, 'valid_token')}>Login</button>
       <button onClick={logout}>Logout</button>
+      <button onClick={() => setError('Some error')}>Trigger Error</button>
     </div>
   );
 };
 
-describe('AuthContext', () => {
-  test('should initialize with correct authentication state', () => {
-    // Simulate that a token is present in localStorage
-    localStorage.getItem.mockReturnValue('existing-token');
+// Test for initial state from localStorage
+test('initial state loads correctly from localStorage', () => {
+  // Simulate stored user and token in localStorage
+  localStorage.setItem('accessToken', 'mock_token');
+  localStorage.setItem('userData', JSON.stringify({ name: 'John' }));
 
-    render(
-      <Router>
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      </Router>
-    );
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
 
-    // Assert the initial state reflects authentication status
-    expect(screen.getByText(/Authenticated/)).toBeInTheDocument();
-    expect(screen.getByText(/Token: existing-token/)).toBeInTheDocument();
-    expect(screen.getByText(/Welcome, John/)).toBeInTheDocument();
-  });
+  // Check if the user is authenticated
+  expect(screen.getByText('Welcome, John')).toBeInTheDocument();
+});
 
-  test('should handle login correctly', () => {
-    render(
-      <Router>
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      </Router>
-    );
+// Test login functionality
+test('should login user and update state correctly', () => {
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
 
-    // Click the login button
-    fireEvent.click(screen.getByText(/Login/i));
+  // Click on login button
+  fireEvent.click(screen.getByText('Login'));
 
-    // Check if the state updates correctly
-    expect(screen.getByText(/Authenticated/)).toBeInTheDocument();
-    expect(screen.getByText(/Welcome, John/)).toBeInTheDocument();
-    expect(screen.getByText(/Token: test-token/)).toBeInTheDocument();
-    
-    // Ensure localStorage was updated
-    expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', 'test-token');
-  });
+  // Check if the user is authenticated after login
+  expect(screen.getByText('Welcome, John')).toBeInTheDocument();
 
-  test('should handle logout correctly', () => {
-    // Simulate logged-in state by mocking localStorage
-    localStorage.getItem.mockReturnValue('existing-token');
-    
-    render(
-      <Router>
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      </Router>
-    );
+  // Ensure localStorage is updated
+  expect(localStorage.getItem('accessToken')).toBe('valid_token');
+  expect(localStorage.getItem('userData')).toBe(JSON.stringify({ name: 'John' }));
+});
 
-    // Click the logout button
-    fireEvent.click(screen.getByText(/Logout/i));
+// Test logout functionality
+test('should logout user and clear state and localStorage', () => {
+  // Simulate user login by setting values in localStorage
+  localStorage.setItem('accessToken', 'mock_token');
+  localStorage.setItem('userData', JSON.stringify({ name: 'John' }));
 
-    // Check that the state has been reset to unauthenticated
-    expect(screen.getByText(/Not Authenticated/)).toBeInTheDocument();
-    expect(screen.queryByText(/Welcome, John/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Token: test-token/)).not.toBeInTheDocument();
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
 
-    // Ensure localStorage was cleared
-    expect(localStorage.removeItem).toHaveBeenCalledWith('accessToken');
-    expect(localStorage.removeItem).toHaveBeenCalledWith('userData');
-  });
+  // Trigger logout
+  fireEvent.click(screen.getByText('Logout'));
 
-  test('should load authenticated state from localStorage on reload', () => {
-    // Simulate existing token in localStorage
-    localStorage.getItem.mockReturnValue('existing-token');
-    
-    render(
-      <Router>
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      </Router>
-    );
+  // Ensure user is logged out
+  expect(screen.getByText('Not logged in')).toBeInTheDocument();
 
-    // Check that the user is authenticated based on localStorage
-    expect(screen.getByText(/Authenticated/)).toBeInTheDocument();
-    expect(screen.getByText(/Token: existing-token/)).toBeInTheDocument();
-  });
+  // Ensure localStorage is cleared
+  expect(localStorage.getItem('accessToken')).toBeNull();
+  expect(localStorage.getItem('userData')).toBeNull();
+});
 
-  test('should call setError on login failure', () => {
-    // Mock the setError function
-    const mockSetError = jest.fn();
+// Test error handling
+test('should call setError function on error', () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // Mock console.error
 
-    render(
-      <Router>
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      </Router>
-    );
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
 
-    // Simulate an error during login
-    const { login } = useAuth();
-    act(() => {
-      login(null, null);
-    });
+  // Trigger error
+  fireEvent.click(screen.getByText('Trigger Error'));
 
-    // Check that the error function was called
-    expect(mockSetError).toHaveBeenCalledWith("No valid token found.");
-  });
+  // Check if the error is logged to the console
+  expect(consoleErrorSpy).toHaveBeenCalledWith('Error: ', 'Some error');
+
+  consoleErrorSpy.mockRestore(); // Clean up the spy
 });

@@ -1,12 +1,12 @@
 import {render, screen, fireEvent} from '@testing-library/react';
 import {MemoryRouter,useNavigate} from 'react-router-dom';
-import MainPage from '../MainPage';
+import MainPage from '../features/MainPage/MainPage';
 import '@testing-library/jest-dom';
 
-import {useAuth} from '../Authentication';// for mocking useAuth
+import {useAuth} from '../features/Authentication/Authentication';// for mocking useAuth
 import React from 'react';
 
-jest.mock('../Authentication', () => ({
+jest.mock('../features/Authentication/Authentication', () => ({
     useAuth: jest.fn(() => ({
       isAuthenticated:false,
       login: jest.fn(),

@@ -9,11 +9,21 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const storedToken = localStorage.getItem('accessToken');
-        if (storedToken) {
-            setToken(storedToken);
-            setIsAuthenticated(true);
+        const storedUser = localStorage.getItem('userData');
+        
+        // Check if storedUser is valid JSON
+        if (storedToken && storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setToken(storedToken);
+                setUser(parsedUser);
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Error parsing userData from localStorage:', error);
+            }
         }
     }, []);
+    
 
     const login = (userData, token) => {
         console.log("Redirecting to Login...");
@@ -22,6 +32,7 @@ export const AuthProvider = ({ children }) => {
             setUser(userData);
             setToken(token);
             localStorage.setItem('accessToken', token);
+            localStorage.setItem('userData', JSON.stringify(userData));
             console.log("User authenticated.");
         } else {
             console.error("No valid token found.");

@@ -1,15 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { AuthProvider } from './Authentication';
-import MainPage from './MainPage';
-import MapPage from './MapPage';
-import Profile from './Profile';
-import Favorites from './Favorites';
-import Signup from './Signup';
-import Login from './Login';
+import { AuthProvider } from '../Authentication/Authentication';
+import MainPage from '../MainPage/MainPage';
+import MapPage from '../MapPage/MapPage';
+import Profile from '../Profile/Profile';
+import Favorites from '../Favorites/Favorites';
+import Signup from '../Signup/Signup';
+import Login from '../Login/Login';
 import './App.css';
-import './MainPage.css';
+import '../MainPage/MainPage.css';
 
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;

@@ -1,8 +1,8 @@
 import {render, fireEvent, waitFor, screen} from "@testing-library/react";
 import '@testing-library/jest-dom';
-import MapPage from "../MapPage";
+import MapPage from "../features/MapPage/MapPage";
 import {fetchBuildings, fetchVendingMachines, fetchSnacks} from "../api/api";
-import {AuthProvider} from "../Authentication";
+import {AuthProvider} from "../features/Authentication/Authentication";
 import {MemoryRouter} from "react-router-dom";
 import React from 'react';
 

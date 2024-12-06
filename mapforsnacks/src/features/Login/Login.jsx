@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import { useAuth } from './Authentication';
+import { useAuth } from '../Authentication/Authentication';
 import { Link, useNavigate } from 'react-router-dom';
-import FlashMessage from './FlashMessage';
+import FlashMessage from '../../components/FlashMessage/FlashMessage';
 import axios from 'axios';
 import './Login.css';
-import './App.css';
+import '../App/App.css';
 
 const Login = () => {
     const { isAuthenticated, login, logout } = useAuth();

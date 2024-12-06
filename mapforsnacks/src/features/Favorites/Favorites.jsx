@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from './Authentication';
+import { useAuth } from '../Authentication/Authentication';
 import { Link, useNavigate } from 'react-router-dom';
-import FlashMessage from './FlashMessage';
+import FlashMessage from '../../components/FlashMessage/FlashMessage';
 import './Favorites.css';
-import './App.css';
+import '../App/App.css';
 
 function Favorites() {
     const { isAuthenticated, googleId, user, logout } = useAuth();

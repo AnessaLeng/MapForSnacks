@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { AuthProvider } from '../Authentication';
-import Profile from '../Profile';
+import { AuthProvider } from '../features/Authentication/Authentication';
+import Profile from '../features/Profile/Profile';
 import axios from 'axios';
 import React from 'react';
 

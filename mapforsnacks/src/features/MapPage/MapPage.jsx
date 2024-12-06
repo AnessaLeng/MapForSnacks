@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './Authentication';
+import { useAuth } from '../Authentication/Authentication';
 import Select from "react-select";
 import axios from 'axios';
 import './MapPage.css';
-import { fetchBuildings, fetchVendingMachines, fetchSnacks, saveSearchHistory, fetchSearchHistory } from "./api/api";
+import { fetchBuildings, fetchVendingMachines, fetchSnacks, saveSearchHistory, fetchSearchHistory } from "../../api/api";
 
 const MapPage = () => {
     const { isAuthenticated, logout } = useAuth();
@@ -124,7 +124,7 @@ const MapPage = () => {
                     Add to Favorites
                     </button>
                 `;
-            
+
                 marker.addListener("click", () => {
                     infoWindow.setContent(`
                         <div>
@@ -138,12 +138,24 @@ const MapPage = () => {
                     infoWindow.open(mapInstance, marker);
                     const favoriteBtn = document.getElementById("favorite-btn");
                     if (favoriteBtn) {
-                        favoriteBtn.onclick = () => {
+                        favoriteBtn.onclick = async () => {
                             console.log('Add to Favorites clicked!');
-                            handleAddFavorite(building); // Add favorite when the button is clicked
-                            infoWindow.close();
+                            favoriteBtn.disabled = true;
+                            favoriteBtn.textContent = "Adding...";
+                            try {
+                                await handleAddFavorite(building);
+                                // Update button after successful addition
+                                favoriteBtn.textContent = "Added to Favorites";
+                                // Close the info window after a delay
+                                setTimeout(() => {
+                                    infoWindow.close();
+                                }, 1000);
+                            } catch (error) {
+                                console.error('Failed to add to favorites:', error);
+                                favoriteBtn.textContent = "Already favorited";  // Show failure message
+                            }
                         };
-                    }
+                    } 
                 });
             
                 if (!mapInstance.markers) mapInstance.markers = [];
@@ -225,12 +237,13 @@ const MapPage = () => {
                 } else {
                     const errorData = await response.json();
                     console.error('Failed to add to favorites:', errorData.message);
+                    throw new Error('Failed to add to favorites');
                 }
             } catch (error) {
-                console.error('Error adding to favorites:', error);
-            }
+                console.error('Building already added to favorites!');
+                throw error;
         };
-
+    }
         const handleSearchHistory = async (data) => {
             const token = localStorage.getItem('authToken');
             try {
