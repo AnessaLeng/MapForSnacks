@@ -9,8 +9,10 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const storedToken = localStorage.getItem('accessToken');
-        if (storedToken) {
+        const storedUser = localStorage.getItem('userData');
+        if (storedToken  && storedUser) {
             setToken(storedToken);
+            setUser(JSON.parse(storedUser));
             setIsAuthenticated(true);
         }
     }, []);
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }) => {
             setUser(userData);
             setToken(token);
             localStorage.setItem('accessToken', token);
+            localStorage.setItem('userData', JSON.stringify(userData));
             console.log("User authenticated.");
         } else {
             console.error("No valid token found.");
