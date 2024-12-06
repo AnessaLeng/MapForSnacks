@@ -10,7 +10,6 @@ beforeEach(() => {
 });
 
 // Mocked Test Component to test the hooks
-// Mocked Test Component to test the hooks
 const TestComponent = () => {
   const { isAuthenticated, user, token, login, logout, setError } = useAuth();
 
@@ -18,10 +17,7 @@ const TestComponent = () => {
     <div>
       <p>{isAuthenticated ? `Welcome, ${user?.name}` : 'Not logged in'}</p>
       <button onClick={() => login({ name: 'John' }, 'valid_token')}>Login</button>
-      <p>{isAuthenticated ? `Welcome, ${user?.name}` : 'Not logged in'}</p>
-      <button onClick={() => login({ name: 'John' }, 'valid_token')}>Login</button>
       <button onClick={logout}>Logout</button>
-      <button onClick={() => setError('Some error')}>Trigger Error</button>
       <button onClick={() => setError('Some error')}>Trigger Error</button>
     </div>
   );
@@ -32,21 +28,7 @@ test('initial state loads correctly from localStorage', () => {
   // Simulate stored user and token in localStorage
   localStorage.setItem('accessToken', 'mock_token');
   localStorage.setItem('userData', JSON.stringify({ name: 'John' }));
-// Test for initial state from localStorage
-test('initial state loads correctly from localStorage', () => {
-  // Simulate stored user and token in localStorage
-  localStorage.setItem('accessToken', 'mock_token');
-  localStorage.setItem('userData', JSON.stringify({ name: 'John' }));
 
-  render(
-    <AuthProvider>
-      <TestComponent />
-    </AuthProvider>
-  );
-
-  // Check if the user is authenticated
-  expect(screen.getByText('Welcome, John')).toBeInTheDocument();
-});
   render(
     <AuthProvider>
       <TestComponent />
@@ -65,8 +47,6 @@ test('should login user and update state correctly', () => {
     </AuthProvider>
   );
 
-  // Click on login button
-  fireEvent.click(screen.getByText('Login'));
   // Click on login button
   fireEvent.click(screen.getByText('Login'));
 
