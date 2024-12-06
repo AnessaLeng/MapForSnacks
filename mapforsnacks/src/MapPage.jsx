@@ -76,7 +76,7 @@ const MapPage = () => {
         const loadGoogleMapsScript = () => {
             if (!document.querySelector('script[src*="maps.googleapis.com/maps/api/js"]')) {
                 const script = document.createElement("script");
-                script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB2cgUyYlI3DBdzF_GA9WLi6uMoh75ONsY&libraries=places`;
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`;
                 script.async = true;
                 script.onload = initMap;
                 document.head.appendChild(script);
@@ -84,6 +84,9 @@ const MapPage = () => {
                 initMap();
             }
         };
+        
+
+        
 
         const initMap = () => {
             if (!map) {
@@ -282,23 +285,6 @@ const MapPage = () => {
         {!isSidebarOpen ? (
             // Collapsed Sidebar with Icons Only
             <div className="icon-only">
-            <nav className="navbar">
-            <ul className="navbar-list">
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/map">Map</Link></li>
-                {!isAuthenticated ? (
-                    <>
-                        <li><Link to="/signup">Signup</Link></li>
-                        <li><Link to="/login">Login</Link></li>
-                    </>
-                ) : (
-                    <>
-                        <li><Link to="/profile">Profile</Link></li>
-                        <li><button onClick={logout}>Logout</button></li>
-                    </>
-                )}
-            </ul>
-            </nav>
                 <div>
                     <img src="/images/building.png" alt="Building Icon" title="Filter by Building" />
                 </div>
