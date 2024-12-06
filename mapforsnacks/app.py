@@ -210,7 +210,7 @@ def get_search_history():
         entry['user_id'] = str(entry['user_id'])  # Convert user_id to string
     return jsonify(search_history)
 
-@app.route('/api/search_history', methods=['DELETE'])
+@app.route('/search_history', methods=['DELETE'])
 @jwt_required()
 def delete_search_history():
     current_user_email = get_jwt_identity()
